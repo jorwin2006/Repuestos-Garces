@@ -17,6 +17,18 @@ export default function Home() {
         Selecciona tu marca para ver los repuestos organizados por categorías.
       </p>
 
+      <form action="/buscar" method="get" className="search-form">
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar por nombre, OEM o marca..."
+          className="search-input"
+        />
+        <button type="submit" className="search-button">
+          Buscar
+        </button>
+      </form>
+
       <div className="grid">
         {marcas.map((marca) => (
           <Link key={marca} href={`/marca/${marca}`} className="card">

@@ -1,0 +1,22 @@
+Estoy continuando un proyecto ya iniciado llamado "Repuestos Garces". No quiero empezar desde cero. Necesito que continúes desde este estado:
+
+- Es una web catálogo en Next.js 16 con TypeScript y App Router.
+- Negocio: venta de repuestos para camiones y buses.
+- Estructura actual: inicio por marcas, luego página por marca con productos agrupados por categorías, luego ficha individual por producto.
+- La venta actual es por cotización vía WhatsApp, no carrito todavía.
+- Se muestran precios con estrategia de precio normal + precio oferta.
+- Hay buscador implementado en `app/buscar/page.tsx` usando `searchParams`.
+- Importante: en Next.js 16, `params` y `searchParams` llegan como Promise, así que se está usando `await params` y `await searchParams`.
+- Base de datos actual en `data/products.ts`.
+- Cada producto tiene: id, marcaVehiculo, categoria, nombre, slug, codigoOEM, precio, precioOferta, stock, imagen, compatibilidad.
+- Las imágenes están dentro de `public/products/` y se referencian como `/products/nombre.png`.
+- Ya funcionan:
+  - página principal
+  - rutas dinámicas por marca
+  - agrupación por categorías
+  - tarjetas con imagen
+  - ficha individual
+  - botón de WhatsApp
+  - buscador
+
+Quiero que continúes desde aquí, sin rehacer lo anterior. Respeta la estructura actual y propón el siguiente paso de mejora más útil.
