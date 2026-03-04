@@ -1,3 +1,10 @@
+/* Reset de box-sizing para todos los elementos */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -494,6 +501,16 @@ section h2 {
    box-sizing: border-box;
    width: 100%;
    max-width: 100%;
+  }
+
+  /* Ajustes adicionales para prevenir desbordamiento en móvil */
+  .header-search-form {
+    min-width: 0;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
   }
   
 }
