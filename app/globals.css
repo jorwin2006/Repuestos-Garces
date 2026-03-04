@@ -309,9 +309,13 @@ section h2 {
    AJUSTES RESPONSIVE MOVIL
    ========================= */
 
+   
 @media (max-width: 768px) {
   .container {
-    padding: 16px;
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .title {
@@ -459,6 +463,39 @@ section h2 {
     text-align: center;
     padding: 14px;
   }
+
+   /* Evita desbordes horizontales en móvil */
+
+  html, body {
+   max-width: 100%;
+   overflow-x: hidden;
+  }
+
+  /* Asegura que el header no se salga */
+
+  .site-header {
+  width: 100%;
+  }
+
+  /* Asegura que el contenido del header use todo el ancho disponible */
+
+  .site-header .container {
+   width: 100%;
+  }
+
+  /* El buscador del header no debe desbordar */
+  .header-search-form {
+   box-sizing: border-box;
+   width: 100%;
+  }
+
+  .header-search-input,
+  .header-search-button {
+   box-sizing: border-box;
+   width: 100%;
+   max-width: 100%;
+  }
+  
 }
 
 /* Extra pequeño */
