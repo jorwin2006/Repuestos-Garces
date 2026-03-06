@@ -12,9 +12,9 @@ export type Product = {
   compatibilidad: string[];
 };
 
-export const products: Product[] = [
-  {
-    id: "1",
+   /* =========================
+              Plantilla
+   id: "1",
     marcaVehiculo: "HINO",
     categoria: "Dirección",
     nombre: "Terminal Dirección Derecho RH - Nakata N-533",
@@ -26,43 +26,266 @@ export const products: Product[] = [
     imagen: "/products/Terminal_Direccion_RH.png",
     compatibilidad: ["Hino 1721", "Hino 1318"],
   },
-  {
-    id: "2",
-    marcaVehiculo: "HINO",
-    categoria: "Frenos",
-    nombre: "Bomba Freno Hino Dutro 816 - 716",
-    slug: "bomba-de-freno-hino",
-    codigoOEM: "HF-220",
-    precio: 45.0,
-    precioOferta: 39.9,
-    stock: "Disponible",
-    imagen: "/products/Bomba_Freno_816_716.png",
-    compatibilidad: ["Dutro 816", "Dutro 716"],
-  },
-  {
-    id: "3",
-    marcaVehiculo: "ISUZU",
-    categoria: "Motor",
-    nombre: "Filtro de Aceite Isuzu",
-    slug: "filtro-de-aceite-isuzu",
-    codigoOEM: "IA-101",
-    precio: 12.5,
-    precioOferta: 10.99,
-    stock: "Disponible",
-    imagen: "/products/filtro-aceite-isuzu.jpg",
-    compatibilidad: ["Isuzu NPR", "Isuzu NKR"],
-  },
-  {
-    id: "4",
-    marcaVehiculo: "MERCEDES-BENZ",
-    categoria: "Suspensión",
-    nombre: "Amortiguador Delantero Mercedes-Benz",
-    slug: "amortiguador-delantero-mercedes",
-    codigoOEM: "MB-450",
-    precio: 68.0,
-    precioOferta: 61.5,
-    stock: "Disponible",
-    imagen: "/products/amortiguador-mercedes.jpg",
-    compatibilidad: ["Mercedes-Benz LO", "Mercedes-Benz OF"],
-  },
+   ========================= */
+export const products: Product[] = [
+   /* =========================
+              HINO
+   ========================= */
+   /* =========================
+          HINO-DIRECCIÓN
+   ========================= */
+
+
+   /* =========================
+           HINO-FRENOS
+    ========================= */
+
+    /* =========================
+          HINO-TRANSMISIÓN
+    ========================= */
+
+    /* =========================
+          HINO-SUSPENCION
+    ========================= */
+
+    /* =========================
+           HINO-ELECTRÓNICO
+     ========================= */
+
+    /* =========================
+     HINO-ELECTRÓNICA Y SOFTWARE
+     ========================= */
+
+    /* =========================
+         HINO-REFRIGERACIÓN
+    ========================= */
+
+    /* =========================
+           SISTEMA ESCAPE 
+    ========================= */
+    /* =========================
+          SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+             FIN HINO
+    ========================= */
+
+
+    /* =========================
+              ISUZU
+    ========================= */
+
+    /* =========================
+        ISUZU-SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+          ISUZU-TRANSMISIÓN
+    ========================= */
+
+    /* =========================
+          ISUZU-SUSPENCION
+    ========================= */
+
+    /* =========================
+           ISUZU-ELECTRÓNICO
+     ========================= */
+
+    /* =========================
+     ISUZU-ELECTRÓNICA Y SOFTWARE
+     ========================= */
+
+    /* =========================
+         ISUZU-REFRIGERACIÓN
+    ========================= */
+
+    /* =========================
+        ISUZU-SISTEMA ESCAPE 
+    ========================= */
+    /* =========================
+        ISUZU-SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+           ISUZU-FRENOS
+    ========================= */
+
+    /* =========================
+          ISUZU-DIRECCIÓN
+    ========================= */
+
+    /* =========================
+            FIN ISUZU
+    ========================= */
+  
+    /* =========================
+           MERCEDES-BENZ
+    ========================= */
+    /* =========================
+          MERCEDES-SUSPENCION
+    ========================= */
+
+    /* =========================
+          MERCEDES-TRANSMISIÓN
+    ========================= */
+
+    /* =========================
+           MERCEDES-ELECTRÓNICO
+     ========================= */
+
+    /* =========================
+     MERCEDES-ELECTRÓNICA Y SOFTWARE
+     ========================= */
+
+    /* =========================
+         MERCEDES-REFRIGERACIÓN
+    ========================= */
+
+    /* =========================
+      MERCEDES-SISTEMA ESCAPE 
+    ========================= */
+    /* =========================
+      MERCEDES-SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+           MERCEDES-FRENOS
+    ========================= */
+
+    /* =========================
+          MERCEDES-DIRECCIÓN
+    ========================= */
+
+    /* =========================
+           FIN MERCEDEZ-BENZ
+     ========================= */
+
+     /* =========================
+              NISSAN
+     ========================= */
+
+    /* =========================
+          NISSAN-TRANSMISIÓN
+    ========================= */
+
+    /* =========================
+          NISSAN-SUSPENCION
+    ========================= */
+
+    /* =========================
+           NISSAN-ELECTRÓNICO
+     ========================= */
+
+    /* =========================
+     NISSAN-ELECTRÓNICA Y SOFTWARE
+     ========================= */
+
+    /* =========================
+         NISSAN-REFRIGERACIÓN
+    ========================= */
+
+    /* =========================
+        NISSAN-SISTEMA ESCAPE 
+    ========================= */
+    /* =========================
+        NISSAN-SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+           NISSAN-FRENOS
+    ========================= */
+
+    /* =========================
+          NISSAN-DIRECCIÓN
+    ========================= */
+
+    /* =========================
+             FIN NISSAN
+     ========================= */
+
+     /* =========================
+              YUTONG
+     ========================= */
+
+    /* =========================
+          YUTONG-TRANSMISIÓN
+    ========================= */
+
+    /* =========================
+          YUTONG-SUSPENCION
+    ========================= */
+
+    /* =========================
+           YUTONG-ELECTRÓNICO
+     ========================= */
+
+    /* =========================
+     YUTONG-ELECTRÓNICA Y SOFTWARE
+     ========================= */
+
+    /* =========================
+         YUTONG-REFRIGERACIÓN
+    ========================= */
+
+    /* =========================
+        YUTONG-SISTEMA ESCAPE 
+    ========================= */
+    /* =========================
+        YUTONG-SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+           YUTONG-FRENOS
+    ========================= */
+
+    /* =========================
+          YUTONG-DIRECCIÓN
+    ========================= */
+
+     /* =========================
+             FIN YUTONG
+     ========================= */
+
+     /* =========================
+              VOLKSWAGEN
+     ========================= */  
+    /* =========================
+          VOLKSWAGEN-TRANSMISIÓN
+    ========================= */
+
+    /* =========================
+          VOLKSWAGEN-SUSPENCION
+    ========================= */
+
+    /* =========================
+        VOLKSWAGEN-ELECTRÓNICO
+     ========================= */
+
+    /* =========================
+     VOLKSWAGEN-ELECTRÓNICA Y SOFTWARE
+     ========================= */
+
+    /* =========================
+         VOLKSWAGEN-REFRIGERACIÓN
+    ========================= */
+
+    /* =========================
+      VOLKSWAGEN-SISTEMA ESCAPE 
+    ========================= */
+    /* =========================
+      VOLKSWAGEN-SISTEMA MOTOR
+    ========================= */
+
+    /* =========================
+          VOLKSWAGEN-FRENOS
+    ========================= */
+
+    /* =========================
+        VOLKSWAGEN-DIRECCIÓN
+    ========================= */   
+
+     /* =========================
+            FIN VOLKSWAGEN
+     ========================= */ 
 ];

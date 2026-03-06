@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { products } from "../../../data/products";
+import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{
@@ -10,6 +11,34 @@ type Props = {
     categoria?: string;
   }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { marca } = await params;
+  const marcaDecodificada = decodeURIComponent(marca);
+
+  const cantidad = products.filter(
+    (p) => p.marcaVehiculo.toUpperCase() === marcaDecodificada.toUpperCase()
+  ).length;
+
+  const descripcion = `Repuestos para ${marcaDecodificada} – Encuentra repuestos originales y alternativos para camiones y buses ${marcaDecodificada}. Contamos con amplio stock y envíos a todo el Ecuador.`;
+
+  return {
+    title: `Repuestos ${marcaDecodificada}`,
+    description: descripcion,
+    openGraph: {
+      title: `Repuestos ${marcaDecodificada} | Repuestos Garces`,
+      description: descripcion,
+      url: `https://repuestosgarces.com/marca/${encodeURIComponent(marcaDecodificada)}`,
+      images: [
+        {
+          url: `/og-marca-${marcaDecodificada.toLowerCase()}.jpg`, // Opcional: imagen específica por marca
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+  };
+}
 
 export default async function MarcaPage({ params, searchParams }: Props) {
   const { marca } = await params;

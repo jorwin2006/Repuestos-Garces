@@ -1,12 +1,53 @@
 import Link from "next/link";
 import { products } from "../../../data/products";
 import Image from "next/image";
+import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{
     slug: string;
   }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const producto = products.find((p) => p.slug === slug);
+
+  if (!producto) {
+    return {
+      title: "Producto no encontrado",
+      description: "El producto que buscas no está disponible.",
+    };
+  }
+
+  const descripcion = `Repuesto ${producto.nombre} para ${producto.marcaVehiculo} – OEM: ${producto.codigoOEM}. Categoría: ${producto.categoria}. Compatible con: ${producto.compatibilidad.join(", ")}.`;
+
+  return {
+    title: producto.nombre,
+    description: descripcion,
+    openGraph: {
+      title: producto.nombre,
+      description: descripcion,
+      url: `https://repuestosgarces.com/producto/${producto.slug}`,
+      images: [
+        {
+          url: producto.imagen, // Ruta relativa; metadataBase la convierte en absoluta
+          width: 800,
+          height: 600,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: producto.nombre,
+      description: descripcion,
+      images: [producto.imagen],
+    },
+    alternates: {
+      canonical: `/producto/${producto.slug}`,
+    },
+  };
+}
 
 export default async function ProductoPage({ params }: Props) {
   const { slug } = await params;
@@ -57,7 +98,7 @@ Compatibilidad: ${producto.compatibilidad.join(", ")}
             src={producto.imagen}
             alt={producto.nombre}
             width={500}
-            height={500}    
+            height={500}
             className="product-image"
           />
         </div>
@@ -115,7 +156,7 @@ Compatibilidad: ${producto.compatibilidad.join(", ")}
       <div className="info-section">
         <h2>Envíos y entregas</h2>
         <ul>
-          <li><strong>Retiro en local:</strong> Repuestos Garces - Santo Domingo, Av Esmeraldas Lote 6 y Río Yuturi,frente a Erco TIRE</li>
+          <li><strong>Retiro en local:</strong> Repuestos Garces - Santo Domingo, Av Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE</li>
           <li><strong>Delivery local:</strong> Coordinado por WhatsApp.</li>
           <li>
             <strong>Envíos nacionales:</strong> Por encomienda en buses
