@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 
 export default function Home() {
   const marcas = [
-    { name: "HINO", logo: "/products/HINO/Hino.png" },
-    { name: "ISUZU", logo: "/products/ISUZU/isuzu.png" },
+    { name: "HINO", logo: "/products/HINO/Hino2.png" },
+    { name: "ISUZU", logo: "/products/ISUZU/isuzu1.png" },
     { name: "NISSAN", logo: "/products/NISSAN/nissan.png" },
     { name: "MERCEDES-BENZ", logo: "/products/MERCEDES/mercedes-benz.png" },
-    { name: "VOLKSWAGEN", logo: "/products/VOLKSWAGEN/volkswagen.png" },
-    { name: "YUTONG", logo: "/products/YUTONG/yutong.png" },
+    { name: "VOLKSWAGEN", logo: "/products/VOLKSWAGEN/volkswagen1.png" },
+    { name: "YUTONG", logo: "/products/YUTONG/yutong1.png" },
   ];
 
   return (

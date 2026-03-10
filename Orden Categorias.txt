@@ -1,0 +1,12 @@
+1) Motor
+2) Frenos 
+3) Suspensión
+4) Dirección 
+5) Transmisión 
+6) Embrague 
+7) Eléctrico
+8) Neumático 
+9) Filtros 
+10) Enfriamiento 
+11) Escape 
+12) Iluminación

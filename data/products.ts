@@ -14,7 +14,8 @@ export type Product = {
 
    /* =========================
               Plantilla
-   id: "1",
+  {    
+    id: "1",
     marcaVehiculo: "HINO",
     categoria: "Dirección",
     nombre: "Terminal Dirección Derecho RH - Nakata N-533",
@@ -34,8 +35,7 @@ export const products: Product[] = [
    /* =========================
           HINO-DIRECCIÓN
    ========================= */
-
-
+   
    /* =========================
            HINO-FRENOS
     ========================= */
