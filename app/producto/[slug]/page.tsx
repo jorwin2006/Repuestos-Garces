@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const descripcion = `Repuesto ${producto.nombre} para ${producto.marcaVehiculo} – OEM: ${producto.codigoOEM}. Categoría: ${producto.categoria}. Compatible con: ${producto.compatibilidad.join(", ")}.`;
+  const descripcion = `Repuesto ${producto.nombre} para ${producto.marcaVehiculo}. Categoría: ${producto.categoria}. Compatible con: ${producto.compatibilidad.join(", ")}.`;
 
   return {
     title: producto.nombre,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://repuestosgarces.com/producto/${producto.slug}`,
       images: [
         {
-          url: producto.imagen, // Ruta relativa; metadataBase la convierte en absoluta
+          url: producto.imagen,
           width: 800,
           height: 600,
         },
@@ -68,16 +68,11 @@ export default async function ProductoPage({ params }: Props) {
     );
   }
 
-  const precioFinal = producto.precioOferta ?? producto.precio;
-
   const mensaje = `Hola, quiero cotizar este repuesto:
 Producto: ${producto.nombre}
 Marca: ${producto.marcaVehiculo}
 Categoría: ${producto.categoria}
-Código OEM: ${producto.codigoOEM}
-Precio oferta: $${precioFinal.toFixed(2)}
 Compatibilidad: ${producto.compatibilidad.join(", ")}
-
 ¿Sigue disponible?`;
 
   const whatsappURL = `https://wa.me/593991657178?text=${encodeURIComponent(
@@ -122,14 +117,15 @@ Compatibilidad: ${producto.compatibilidad.join(", ")}
           </p>
 
           <div style={{ margin: "18px 0" }}>
-            <p style={{ margin: 0 }}>
-              <strong>Precio normal:</strong>{" "}
-              <span style={{ textDecoration: "line-through", color: "#777" }}>
-                ${producto.precio.toFixed(2)}
-              </span>
-            </p>
-            <p className="offer-price">
-              Precio oferta: ${precioFinal.toFixed(2)}
+            <p
+              style={{
+                margin: 0,
+                fontSize: "28px",
+                fontWeight: "bold",
+                color: "#15803d",
+              }}
+            >
+              Consulta precio por WhatsApp
             </p>
           </div>
 
@@ -156,8 +152,13 @@ Compatibilidad: ${producto.compatibilidad.join(", ")}
       <div className="info-section">
         <h2>Envíos y entregas</h2>
         <ul>
-          <li><strong>Retiro en local:</strong> Repuestos Garces - Santo Domingo, Av Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE</li>
-          <li><strong>Delivery local:</strong> Coordinado por WhatsApp.</li>
+          <li>
+            <strong>Retiro en local:</strong> Repuestos Garces - Santo Domingo,
+            Av Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE
+          </li>
+          <li>
+            <strong>Delivery local:</strong> Coordinado por WhatsApp.
+          </li>
           <li>
             <strong>Envíos nacionales:</strong> Por encomienda en buses
             interprovinciales, el cliente debe retirar en el terminal designado

@@ -16,7 +16,7 @@ export default async function BuscarPage({ searchParams }: Props) {
     ? products.filter((p) => {
         const texto = [
           p.nombre,
-          p.codigoOEM,
+          p.codigoOEM ?? "",
           p.marcaVehiculo,
           p.categoria,
           ...(p.compatibilidad ?? []),
@@ -30,7 +30,7 @@ export default async function BuscarPage({ searchParams }: Props) {
 
   return (
     <div className="container">
-      <h1 className="title">Buscar repuestos</h1>
+      <h1 className="title">Buscar</h1>
       <p className="subtitle">
         Busca por nombre, código OEM, marca o compatibilidad.
       </p>
@@ -51,7 +51,9 @@ export default async function BuscarPage({ searchParams }: Props) {
       {query === "" ? (
         <p>Escribe algo para buscar.</p>
       ) : resultados.length === 0 ? (
-        <p>No se encontraron productos para: <strong>{q}</strong></p>
+        <p>
+          No se encontraron productos para: <strong>{q}</strong>
+        </p>
       ) : (
         <>
           <p style={{ marginBottom: "18px" }}>
@@ -60,8 +62,6 @@ export default async function BuscarPage({ searchParams }: Props) {
 
           <div className="grid">
             {resultados.map((producto) => {
-              const precioFinal = producto.precioOferta ?? producto.precio;
-
               return (
                 <Link
                   key={producto.id}
@@ -79,20 +79,28 @@ export default async function BuscarPage({ searchParams }: Props) {
                   </div>
 
                   <h3 className="product-card-title">{producto.nombre}</h3>
-                  <p><strong>OEM:</strong> {producto.codigoOEM}</p>
-                  <p><strong>Marca:</strong> {producto.marcaVehiculo}</p>
 
                   <p>
-                    <strong>Precio:</strong>{" "}
-                    <span style={{ textDecoration: "line-through", color: "#777" }}>
-                      ${producto.precio.toFixed(2)}
-                    </span>{" "}
-                    <span style={{ color: "green", fontWeight: "bold" }}>
-                      ${precioFinal.toFixed(2)}
-                    </span>
+                    <strong>Marca:</strong> {producto.marcaVehiculo}
                   </p>
 
-                  <p><strong>Stock:</strong> {producto.stock}</p>
+                  <p
+                    style={{
+                      color: "#16a34a",
+                      fontWeight: "bold",
+                      marginTop: "10px",
+                      lineHeight: "1.4",
+                    }}
+                  >
+                    Consulta precio y disponibilidad por WhatsApp
+                  </p>
+
+                  <p style={{ marginTop: "8px" }}>
+                    <strong style={{ color: "#1e3a8a" }}>Stock:</strong>{" "}
+                    <span style={{ color: "#16a34a", fontWeight: "bold" }}>
+                      {producto.stock}
+                    </span>
+                  </p>
                 </Link>
               );
             })}
