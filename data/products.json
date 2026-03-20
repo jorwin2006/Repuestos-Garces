@@ -1,0 +1,47 @@
+[
+  {
+    "id": "2",
+    "marcaVehiculo": "HINO",
+    "categoria": "Motor",
+    "nombre": "Balancin Motor",
+    "slug": "balancin-motor",
+    "stockDisponible": true,
+    "imagen": "/products/HINO/MOTOR/balancin_motor.png",
+    "compatibilidad": [
+      "Hino J05C",
+      "Hino J08CT"
+    ],
+    "mostrarInfoPublica": true,
+    "mostrarMensajeWhatsApp": true,
+    "telefonoWhatsApp": "593991657178",
+    "envios": {
+      "retiroLocal": "Repuestos Garces - Santo Domingo, Av. Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE.",
+      "deliveryLocal": "Coordinado por WhatsApp.",
+      "enviosNacionales": "Por encomienda en buses interprovinciales; el cliente debe retirar en el terminal designado de su ciudad."
+    },
+    "createdAt": "2026-03-20T00:00:00.000Z",
+    "updatedAt": "2026-03-20T00:00:00.000Z"
+  },
+  {
+    "id": "1",
+    "slug": "hidrovac-freno",
+    "nombre": "Hidrovac Freno",
+    "marcaVehiculo": "HINO",
+    "categoria": "Frenos",
+    "imagen": "/products/HINO/FRENOS/Hidrovac Freno.png",
+    "stockDisponible": true,
+    "telefonoWhatsApp": "593991657178",
+    "compatibilidad": [
+      "Hino Dutro"
+    ],
+    "envios": {
+      "retiroLocal": "Repuestos Garces - Santo Domingo, Av. Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE.",
+      "deliveryLocal": "Coordinado por WhatsApp.",
+      "enviosNacionales": "Por encomienda en buses interprovinciales; el cliente debe retirar en el terminal designado de su ciudad."
+    },
+    "mostrarInfoPublica": true,
+    "mostrarMensajeWhatsApp": true,
+    "createdAt": "2026-03-20T00:00:00.000Z",
+    "updatedAt": "2026-03-20T17:20:11.905Z"
+  }
+]

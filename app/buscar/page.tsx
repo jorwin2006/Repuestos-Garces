@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { products } from "../../data/products";
+import { getProducts } from "../../lib/products";
+import type { Product } from "../../data/products";
 
 type Props = {
   searchParams: Promise<{
@@ -12,14 +13,18 @@ export default async function BuscarPage({ searchParams }: Props) {
   const { q = "" } = await searchParams;
   const query = q.trim().toLowerCase();
 
-  const resultados = query
-    ? products.filter((p) => {
+  const products = await getProducts();
+
+  const resultados: Product[] = query
+    ? products.filter((p: Product) => {
         const texto = [
           p.nombre,
           p.codigoOEM ?? "",
           p.marcaVehiculo,
           p.categoria,
           ...(p.compatibilidad ?? []),
+          p.descripcion ?? "",
+          p.medidas ?? "",
         ]
           .join(" ")
           .toLowerCase();
@@ -30,6 +35,10 @@ export default async function BuscarPage({ searchParams }: Props) {
 
   return (
     <div className="container">
+      <p style={{ marginBottom: "20px" }}>
+        <Link href="/">← Volver al inicio</Link>
+      </p>
+
       <h1 className="title">Buscar</h1>
       <p className="subtitle">
         Busca por nombre, código OEM, marca o compatibilidad.
@@ -40,7 +49,7 @@ export default async function BuscarPage({ searchParams }: Props) {
           type="text"
           name="q"
           defaultValue={q}
-          placeholder="Ej: N-533, terminal, Hino 1721..."
+          placeholder="Ejemplo: balancín, HINO, J08CT, OEM..."
           className="search-input"
         />
         <button type="submit" className="search-button">
@@ -51,59 +60,66 @@ export default async function BuscarPage({ searchParams }: Props) {
       {query === "" ? (
         <p>Escribe algo para buscar.</p>
       ) : resultados.length === 0 ? (
-        <p>
-          No se encontraron productos para: <strong>{q}</strong>
-        </p>
+        <p>No se encontraron productos para: {q}</p>
       ) : (
         <>
-          <p style={{ marginBottom: "18px" }}>
+          <p style={{ marginBottom: "20px" }}>
             Resultados para <strong>{q}</strong>: {resultados.length}
           </p>
 
           <div className="grid">
-            {resultados.map((producto) => {
-              return (
-                <Link
-                  key={producto.id}
-                  href={`/producto/${producto.slug}`}
-                  className="card product-card-link"
-                >
-                  <div className="product-card-image-wrap">
-                    <Image
-                      src={producto.imagen}
-                      alt={producto.nombre}
-                      width={300}
-                      height={220}
-                      className="product-card-image"
-                    />
-                  </div>
+            {resultados.map((producto: Product) => (
+              <Link
+                key={producto.id}
+                href={`/producto/${producto.slug}`}
+                className="card product-card-link"
+              >
+                <div className="product-card-image-wrap">
+                  <Image
+                    src={producto.imagen}
+                    alt={producto.nombre}
+                    width={300}
+                    height={220}
+                    className="product-card-image"
+                  />
+                </div>
 
-                  <h3 className="product-card-title">{producto.nombre}</h3>
+                <h3 className="product-card-title">{producto.nombre}</h3>
 
-                  <p>
-                    <strong>Marca:</strong> {producto.marcaVehiculo}
+                <p className="product-card-meta">
+                  <strong>Marca:</strong> {producto.marcaVehiculo}
+                </p>
+
+                {producto.codigoOEM ? (
+                  <p className="product-card-meta">
+                    <strong>Código OEM:</strong> {producto.codigoOEM}
                   </p>
+                ) : null}
 
-                  <p
-                    style={{
-                      color: "#16a34a",
-                      fontWeight: "bold",
-                      marginTop: "10px",
-                      lineHeight: "1.4",
-                    }}
-                  >
+                {producto.mostrarMensajeWhatsApp !== false ? (
+                  <p className="product-card-whatsapp-copy">
                     Consulta precio y disponibilidad por WhatsApp
                   </p>
+                ) : null}
 
-                  <p style={{ marginTop: "8px" }}>
-                    <strong style={{ color: "#1e3a8a" }}>Stock:</strong>{" "}
-                    <span style={{ color: "#16a34a", fontWeight: "bold" }}>
-                      {producto.stock}
-                    </span>
-                  </p>
-                </Link>
-              );
-            })}
+                {typeof producto.stockDisponible === "boolean" ? (
+                  <div className="stock-chip-wrap">
+                    <div
+                      className={`stock-chip ${
+                        producto.stockDisponible ? "in-stock" : "out-stock"
+                      }`}
+                    >
+                      <strong>Stock:</strong>{" "}
+                      <span>
+                        {producto.stockDisponible
+                          ? "Disponible"
+                          : "No disponible"}
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
+              </Link>
+            ))}
           </div>
         </>
       )}

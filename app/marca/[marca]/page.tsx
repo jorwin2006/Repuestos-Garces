@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { products } from "../../../data/products";
+import { getProducts } from "../../../lib/products";
 
 type Props = {
   params: Promise<{
@@ -17,29 +17,33 @@ export default async function MarcaPage({ params, searchParams }: Props) {
   const { sistema } = await searchParams;
   const marcaDecodificada = decodeURIComponent(marca);
 
-  // Todos los productos de la marca (sin filtro)
+  const products = await getProducts();
+
   const productosMarcaCompleta = products.filter(
-    (p) => p.marcaVehiculo.toLowerCase() === marcaDecodificada.toLowerCase()
+    (p) =>
+      p.mostrarInfoPublica !== false &&
+      p.marcaVehiculo.toLowerCase() === marcaDecodificada.toLowerCase()
   );
 
   if (productosMarcaCompleta.length === 0) {
     notFound();
   }
 
-  // Categorías disponibles en esta marca
   const categorias = Array.from(
-    new Set(productosMarcaCompleta.map((p) => p.categoria))
+    new Set(
+      productosMarcaCompleta
+        .map((p) => p.categoria)
+        .filter((categoria) => Boolean(categoria))
+    )
   );
 
-  // Validar que el sistema solicitado exista
-  const sistemaActivo = sistema && categorias.includes(sistema) ? sistema : null;
+  const sistemaActivo =
+    sistema && categorias.includes(sistema) ? sistema : null;
 
-  // Productos filtrados (si hay sistema activo, solo los de esa categoría)
   const productosFiltrados = sistemaActivo
     ? productosMarcaCompleta.filter((p) => p.categoria === sistemaActivo)
     : productosMarcaCompleta;
 
-  // Categorías a mostrar (una sola si hay filtro, todas si no)
   const categoriasAMostrar = sistemaActivo ? [sistemaActivo] : categorias;
 
   return (
@@ -51,7 +55,6 @@ export default async function MarcaPage({ params, searchParams }: Props) {
       <h1 className="title">Marca: {marcaDecodificada}</h1>
       <p className="subtitle">Repuestos organizados por categorías.</p>
 
-      {/* Botones de filtro por sistema */}
       <div className="category-filters">
         <Link
           href={`/marca/${encodeURIComponent(marcaDecodificada)}`}
@@ -59,11 +62,16 @@ export default async function MarcaPage({ params, searchParams }: Props) {
         >
           Todos
         </Link>
+
         {categorias.map((cat) => (
           <Link
             key={cat}
-            href={`/marca/${encodeURIComponent(marcaDecodificada)}?sistema=${encodeURIComponent(cat)}`}
-            className={`category-filter ${sistemaActivo === cat ? "active" : ""}`}
+            href={`/marca/${encodeURIComponent(
+              marcaDecodificada
+            )}?sistema=${encodeURIComponent(cat)}`}
+            className={`category-filter ${
+              sistemaActivo === cat ? "active" : ""
+            }`}
           >
             {cat}
           </Link>
@@ -100,40 +108,34 @@ export default async function MarcaPage({ params, searchParams }: Props) {
 
                   <h3 className="product-card-title">{producto.nombre}</h3>
 
-                  <div style={{ marginTop: "14px" }}>
-                    <p
-                      style={{
-                        color: "#16a34a",
-                        fontWeight: "bold",
-                        lineHeight: "1.5",
-                        marginBottom: "12px",
-                      }}
-                    >
+                  {producto.codigoOEM ? (
+                    <p className="product-card-meta">
+                      <strong>Código OEM:</strong> {producto.codigoOEM}
+                    </p>
+                  ) : null}
+
+                  {producto.mostrarMensajeWhatsApp !== false ? (
+                    <p className="product-card-whatsapp-copy">
                       Consulta precio y disponibilidad por WhatsApp
                     </p>
+                  ) : null}
 
-                    <div
-                      style={{
-                        borderTop: "1px solid #dbe3ea",
-                        margin: "10px 0 14px 0",
-                      }}
-                    ></div>
-
-                    <div
-                      style={{
-                        backgroundColor: "#f8fafc",
-                        border: "1px solid #e2e8f0",
-                        borderRadius: "10px",
-                        padding: "10px 12px",
-                        display: "inline-block",
-                      }}
-                    >
-                      <strong style={{ color: "#1e3a8a" }}>Stock:</strong>{" "}
-                      <span style={{ color: "#16a34a", fontWeight: "bold" }}>
-                        {producto.stock}
-                      </span>
+                  {typeof producto.stockDisponible === "boolean" ? (
+                    <div className="stock-chip-wrap">
+                      <div
+                        className={`stock-chip ${
+                          producto.stockDisponible ? "in-stock" : "out-stock"
+                        }`}
+                      >
+                        <strong>Stock:</strong>{" "}
+                        <span>
+                          {producto.stockDisponible
+                            ? "Disponible"
+                            : "No disponible"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
                 </Link>
               ))}
             </div>
@@ -141,9 +143,12 @@ export default async function MarcaPage({ params, searchParams }: Props) {
         );
       })}
 
-      {productosFiltrados.length === 0 && sistemaActivo && (
-        <p>No hay productos en la categoría &quot;{sistemaActivo}&quot; para esta marca.</p>
-      )}
+      {productosFiltrados.length === 0 && sistemaActivo ? (
+        <p>
+          No hay productos en la categoría &quot;{sistemaActivo}&quot; para esta
+          marca.
+        </p>
+      ) : null}
     </div>
   );
 }

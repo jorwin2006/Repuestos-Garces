@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { products } from "../../../data/products";
 import Image from "next/image";
 import type { Metadata } from "next";
+import {
+  DEFAULT_DELIVERY_INFO,
+  getProducts,
+  sanitizePhoneNumber,
+} from "../../../lib/products";
 
 type Props = {
   params: Promise<{
@@ -9,9 +13,37 @@ type Props = {
   }>;
 };
 
+function buildDescription(producto: {
+  nombre: string;
+  marcaVehiculo: string;
+  categoria: string;
+  compatibilidad?: string[];
+  descripcion?: string;
+}) {
+  const parts = [
+    `Repuesto ${producto.nombre}`,
+    `para ${producto.marcaVehiculo}`,
+    `Categoría: ${producto.categoria}`,
+  ];
+
+  if (producto.compatibilidad && producto.compatibilidad.length > 0) {
+    parts.push(`Compatible con: ${producto.compatibilidad.join(", ")}`);
+  }
+
+  if (producto.descripcion) {
+    parts.push(producto.descripcion);
+  }
+
+  return parts.join(". ");
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const producto = products.find((p) => p.slug === slug);
+  const products = await getProducts();
+
+  const producto = products.find(
+    (p) => p.slug === slug && p.mostrarInfoPublica !== false
+  );
 
   if (!producto) {
     return {
@@ -20,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const descripcion = `Repuesto ${producto.nombre} para ${producto.marcaVehiculo}. Categoría: ${producto.categoria}. Compatible con: ${producto.compatibilidad.join(", ")}.`;
+  const descripcion = buildDescription(producto);
 
   return {
     title: producto.nombre,
@@ -51,8 +83,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductoPage({ params }: Props) {
   const { slug } = await params;
+  const products = await getProducts();
 
-  const producto = products.find((p) => p.slug === slug);
+  const producto = products.find(
+    (p) => p.slug === slug && p.mostrarInfoPublica !== false
+  );
 
   if (!producto) {
     return (
@@ -68,16 +103,36 @@ export default async function ProductoPage({ params }: Props) {
     );
   }
 
-  const mensaje = `Hola, quiero cotizar este repuesto:
-Producto: ${producto.nombre}
-Marca: ${producto.marcaVehiculo}
-Categoría: ${producto.categoria}
-Compatibilidad: ${producto.compatibilidad.join(", ")}
-¿Sigue disponible?`;
+  const compatibilidad = producto.compatibilidad ?? [];
+  const compatibilidadTexto =
+    compatibilidad.length > 0 ? compatibilidad.join(", ") : "";
 
-  const whatsappURL = `https://wa.me/593991657178?text=${encodeURIComponent(
-    mensaje
-  )}`;
+  const mensajePartes = [
+    "Hola, quiero cotizar este repuesto:",
+    `Producto: ${producto.nombre}`,
+    `Marca: ${producto.marcaVehiculo}`,
+    `Categoría: ${producto.categoria}`,
+    producto.codigoOEM ? `Código OEM: ${producto.codigoOEM}` : undefined,
+    compatibilidadTexto ? `Compatibilidad: ${compatibilidadTexto}` : undefined,
+    typeof producto.stockDisponible === "boolean"
+      ? `Stock: ${producto.stockDisponible ? "Disponible" : "No disponible"}`
+      : undefined,
+    "¿Sigue disponible?",
+  ].filter(Boolean) as string[];
+
+  const whatsappURL = `https://wa.me/${sanitizePhoneNumber(
+    producto.telefonoWhatsApp
+  )}?text=${encodeURIComponent(mensajePartes.join("\n"))}`;
+
+  const deliveryInfo = {
+    retiroLocal:
+      producto.envios?.retiroLocal ?? DEFAULT_DELIVERY_INFO.retiroLocal,
+    deliveryLocal:
+      producto.envios?.deliveryLocal ?? DEFAULT_DELIVERY_INFO.deliveryLocal,
+    enviosNacionales:
+      producto.envios?.enviosNacionales ??
+      DEFAULT_DELIVERY_INFO.enviosNacionales,
+  };
 
   return (
     <div className="container">
@@ -103,31 +158,58 @@ Compatibilidad: ${producto.compatibilidad.join(", ")}
             {producto.nombre}
           </h1>
 
-          <p>
-            <strong>Marca del vehículo:</strong> {producto.marcaVehiculo}
-          </p>
-          <p>
-            <strong>Categoría:</strong> {producto.categoria}
-          </p>
-          <p>
-            <strong>Código OEM:</strong> {producto.codigoOEM}
-          </p>
-          <p>
-            <strong>Stock:</strong> {producto.stock}
-          </p>
-
-          <div style={{ margin: "18px 0" }}>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "28px",
-                fontWeight: "bold",
-                color: "#15803d",
-              }}
-            >
-              Consulta precio por WhatsApp
+          <div className="product-details-list">
+            <p>
+              <strong>Marca del vehículo:</strong> {producto.marcaVehiculo}
             </p>
+            <p>
+              <strong>Categoría:</strong> {producto.categoria}
+            </p>
+
+            {producto.codigoOEM ? (
+              <p>
+                <strong>Código OEM:</strong> {producto.codigoOEM}
+              </p>
+            ) : null}
+
+            {typeof producto.stockDisponible === "boolean" ? (
+              <p>
+                <strong>Stock:</strong>{" "}
+                <span
+                  className={
+                    producto.stockDisponible ? "stock-text-ok" : "stock-text-no"
+                  }
+                >
+                  {producto.stockDisponible ? "Disponible" : "No disponible"}
+                </span>
+              </p>
+            ) : null}
+
+            {producto.medidas ? (
+              <p>
+                <strong>Medidas:</strong> {producto.medidas}
+              </p>
+            ) : null}
+
+            {producto.telefonoAlterno ? (
+              <p>
+                <strong>Teléfono de contacto:</strong>{" "}
+                {producto.telefonoAlterno}
+              </p>
+            ) : null}
           </div>
+
+          {producto.descripcion ? (
+            <p className="product-description">{producto.descripcion}</p>
+          ) : null}
+
+          {producto.mostrarMensajeWhatsApp !== false ? (
+            <div style={{ margin: "18px 0" }}>
+              <p className="product-whatsapp-title">
+                Consulta precio por WhatsApp
+              </p>
+            </div>
+          ) : null}
 
           <a
             href={whatsappURL}
@@ -140,32 +222,42 @@ Compatibilidad: ${producto.compatibilidad.join(", ")}
         </div>
       </div>
 
-      <div className="info-section">
-        <h2>Compatibilidad</h2>
-        <ul>
-          {producto.compatibilidad.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </div>
+      {compatibilidad.length > 0 ? (
+        <div className="info-section">
+          <h2>Compatibilidad</h2>
+          <ul>
+            {compatibilidad.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
-      <div className="info-section">
-        <h2>Envíos y entregas</h2>
-        <ul>
-          <li>
-            <strong>Retiro en local:</strong> Repuestos Garces - Santo Domingo,
-            Av Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE
-          </li>
-          <li>
-            <strong>Delivery local:</strong> Coordinado por WhatsApp.
-          </li>
-          <li>
-            <strong>Envíos nacionales:</strong> Por encomienda en buses
-            interprovinciales, el cliente debe retirar en el terminal designado
-            de su ciudad.
-          </li>
-        </ul>
-      </div>
+      {deliveryInfo.retiroLocal ||
+      deliveryInfo.deliveryLocal ||
+      deliveryInfo.enviosNacionales ? (
+        <div className="info-section">
+          <h2>Envíos y entregas</h2>
+          <ul>
+            {deliveryInfo.retiroLocal ? (
+              <li>
+                <strong>Retiro en local:</strong> {deliveryInfo.retiroLocal}
+              </li>
+            ) : null}
+            {deliveryInfo.deliveryLocal ? (
+              <li>
+                <strong>Delivery local:</strong> {deliveryInfo.deliveryLocal}
+              </li>
+            ) : null}
+            {deliveryInfo.enviosNacionales ? (
+              <li>
+                <strong>Envíos nacionales:</strong>{" "}
+                {deliveryInfo.enviosNacionales}
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }
