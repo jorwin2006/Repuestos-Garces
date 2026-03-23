@@ -152,6 +152,181 @@ export async function getProducts(): Promise<Product[]> {
   return rows.map(mapRowToProduct);
 }
 
+// ========== NEW FUNCTIONS ADDED HERE ==========
+type CategoryRow = {
+  categoria: string;
+};
+
+type CountRow = {
+  total: number;
+};
+
+type PaginatedProductsResult = {
+  items: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+function normalizePage(page?: number) {
+  if (!page || Number.isNaN(page) || page < 1) return 1;
+  return Math.floor(page);
+}
+
+function normalizePageSize(pageSize?: number) {
+  if (!pageSize || Number.isNaN(pageSize) || pageSize < 1) return 12;
+  return Math.min(Math.floor(pageSize), 48);
+}
+
+export async function getBrandCategories(
+  marcaVehiculo: string
+): Promise<string[]> {
+  const rows = (await sql`
+    SELECT DISTINCT categoria
+    FROM products
+    WHERE mostrar_info_publica = true
+      AND LOWER(marca_vehiculo) = LOWER(${marcaVehiculo})
+    ORDER BY categoria ASC
+  `) as CategoryRow[];
+
+  return rows.map((row) => row.categoria);
+}
+
+export async function getPublicProductsByBrand(params: {
+  marcaVehiculo: string;
+  categoria?: string | null;
+  page?: number;
+  pageSize?: number;
+}): Promise<PaginatedProductsResult> {
+  const page = normalizePage(params.page);
+  const pageSize = normalizePageSize(params.pageSize);
+  const offset = (page - 1) * pageSize;
+
+  const countRows = params.categoria
+    ? ((await sql`
+        SELECT COUNT(*)::int AS total
+        FROM products
+        WHERE mostrar_info_publica = true
+          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
+          AND categoria = ${params.categoria}
+      `) as CountRow[])
+    : ((await sql`
+        SELECT COUNT(*)::int AS total
+        FROM products
+        WHERE mostrar_info_publica = true
+          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
+      `) as CountRow[]);
+
+  const total = countRows[0]?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const rows = params.categoria
+    ? ((await sql`
+        SELECT *
+        FROM products
+        WHERE mostrar_info_publica = true
+          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
+          AND categoria = ${params.categoria}
+        ORDER BY nombre ASC
+        LIMIT ${pageSize}
+        OFFSET ${offset}
+      `) as ProductRow[])
+    : ((await sql`
+        SELECT *
+        FROM products
+        WHERE mostrar_info_publica = true
+          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
+        ORDER BY nombre ASC
+        LIMIT ${pageSize}
+        OFFSET ${offset}
+      `) as ProductRow[]);
+
+  return {
+    items: rows.map(mapRowToProduct),
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
+}
+
+export async function searchPublicProducts(params: {
+  query: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<PaginatedProductsResult> {
+  const query = params.query.trim();
+  const page = normalizePage(params.page);
+  const pageSize = normalizePageSize(params.pageSize);
+  const offset = (page - 1) * pageSize;
+
+  if (!query) {
+    return {
+      items: [],
+      total: 0,
+      page,
+      pageSize,
+      totalPages: 1,
+    };
+  }
+
+  const like = `%${query}%`;
+
+  const countRows = (await sql`
+    SELECT COUNT(*)::int AS total
+    FROM products
+    WHERE mostrar_info_publica = true
+      AND (
+        nombre ILIKE ${like}
+        OR codigo_oem ILIKE ${like}
+        OR marca_vehiculo ILIKE ${like}
+        OR categoria ILIKE ${like}
+        OR descripcion ILIKE ${like}
+        OR medidas ILIKE ${like}
+        OR EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements_text(COALESCE(compatibilidad, '[]'::jsonb)) AS item
+          WHERE item ILIKE ${like}
+        )
+      )
+  `) as CountRow[];
+
+  const total = countRows[0]?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const rows = (await sql`
+    SELECT *
+    FROM products
+    WHERE mostrar_info_publica = true
+      AND (
+        nombre ILIKE ${like}
+        OR codigo_oem ILIKE ${like}
+        OR marca_vehiculo ILIKE ${like}
+        OR categoria ILIKE ${like}
+        OR descripcion ILIKE ${like}
+        OR medidas ILIKE ${like}
+        OR EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements_text(COALESCE(compatibilidad, '[]'::jsonb)) AS item
+          WHERE item ILIKE ${like}
+        )
+      )
+    ORDER BY nombre ASC
+    LIMIT ${pageSize}
+    OFFSET ${offset}
+  `) as ProductRow[];
+
+  return {
+    items: rows.map(mapRowToProduct),
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
+}
+// ========== END OF NEW FUNCTIONS ==========
+
 export async function upsertProduct(input: ProductInput): Promise<Product> {
   const now = new Date().toISOString();
   const existing = input.id ? await findById(input.id) : undefined;

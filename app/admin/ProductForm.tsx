@@ -1,6 +1,12 @@
 "use client";
 
-import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import type { ProductInput, Product } from "../../lib/products";
 
 type Props = {
@@ -22,8 +28,12 @@ export default function ProductForm({
   onCancel,
   onSave,
 }: Props) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [nombre, setNombre] = useState(initialProduct?.nombre ?? "");
-  const [marcaVehiculo, setMarcaVehiculo] = useState(initialProduct?.marcaVehiculo ?? "");
+  const [marcaVehiculo, setMarcaVehiculo] = useState(
+    initialProduct?.marcaVehiculo ?? ""
+  );
   const [categoria, setCategoria] = useState(initialProduct?.categoria ?? "");
   const [codigoOEM, setCodigoOEM] = useState(initialProduct?.codigoOEM ?? "");
   const [telefonoWhatsApp, setTelefonoWhatsApp] = useState(
@@ -33,11 +43,15 @@ export default function ProductForm({
     initialProduct?.telefonoAlterno ?? ""
   );
   const [medidas, setMedidas] = useState(initialProduct?.medidas ?? "");
-  const [descripcion, setDescripcion] = useState(initialProduct?.descripcion ?? "");
+  const [descripcion, setDescripcion] = useState(
+    initialProduct?.descripcion ?? ""
+  );
   const [compatibilidad, setCompatibilidad] = useState(
     toTextareaValue(initialProduct?.compatibilidad)
   );
-  const [retiroLocal, setRetiroLocal] = useState(initialProduct?.envios?.retiroLocal ?? "");
+  const [retiroLocal, setRetiroLocal] = useState(
+    initialProduct?.envios?.retiroLocal ?? ""
+  );
   const [deliveryLocal, setDeliveryLocal] = useState(
     initialProduct?.envios?.deliveryLocal ?? ""
   );
@@ -62,7 +76,10 @@ export default function ProductForm({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const previewImage = useMemo(() => imageUrl || "/products/placeholder.svg", [imageUrl]);
+  const previewImage = useMemo(
+    () => imageUrl || "/products/placeholder.svg",
+    [imageUrl]
+  );
 
   async function handleFileUpload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -91,13 +108,24 @@ export default function ProductForm({
 
       setImageUrl(data.imageUrl);
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : "Error al subir la imagen.");
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Error al subir la imagen."
+      );
     } finally {
       setUploading(false);
     }
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleClearImage() {
+    setImageUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setSaving(true);
     setError(null);
@@ -131,21 +159,31 @@ export default function ProductForm({
 
       await onSave(payload);
     } catch (saveError) {
-      setError(saveError instanceof Error ? saveError.message : "No se pudo guardar el producto.");
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "No se pudo guardar el producto."
+      );
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="admin-modal-backdrop" role="dialog" aria-modal="true">
+    <div className="admin-modal-backdrop">
       <div className="admin-modal">
         <div className="admin-modal-header">
           <div>
             <h2>{initialProduct ? "Editar repuesto" : "Nuevo repuesto"}</h2>
             <p>Los campos vacíos no se mostrarán en la ficha pública.</p>
           </div>
-          <button type="button" className="admin-close-btn" onClick={onCancel}>
+
+          <button
+            type="button"
+            className="admin-close-btn"
+            onClick={onCancel}
+            aria-label="Cerrar"
+          >
             ×
           </button>
         </div>
@@ -154,7 +192,11 @@ export default function ProductForm({
           <div className="admin-form-grid">
             <label>
               <span>Nombre del repuesto *</span>
-              <input value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+              <input
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                required
+              />
             </label>
 
             <label>
@@ -168,12 +210,19 @@ export default function ProductForm({
 
             <label>
               <span>Categoría *</span>
-              <input value={categoria} onChange={(e) => setCategoria(e.target.value)} required />
+              <input
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value)}
+                required
+              />
             </label>
 
             <label>
               <span>¿Stock disponible?</span>
-              <select value={stockEstado} onChange={(e) => setStockEstado(e.target.value as StockState)}>
+              <select
+                value={stockEstado}
+                onChange={(e) => setStockEstado(e.target.value as StockState)}
+              >
                 <option value="">No mostrar</option>
                 <option value="si">Sí</option>
                 <option value="no">No</option>
@@ -182,7 +231,10 @@ export default function ProductForm({
 
             <label>
               <span>Código OEM</span>
-              <input value={codigoOEM} onChange={(e) => setCodigoOEM(e.target.value)} />
+              <input
+                value={codigoOEM}
+                onChange={(e) => setCodigoOEM(e.target.value)}
+              />
             </label>
 
             <label>
@@ -205,14 +257,17 @@ export default function ProductForm({
 
             <label>
               <span>Medidas</span>
-              <input value={medidas} onChange={(e) => setMedidas(e.target.value)} />
+              <input
+                value={medidas}
+                onChange={(e) => setMedidas(e.target.value)}
+              />
             </label>
           </div>
 
           <label>
             <span>Descripción</span>
             <textarea
-              rows={3}
+              rows={4}
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               placeholder="Ejemplo: Balancín para motor Hino, venta por unidad."
@@ -232,7 +287,11 @@ export default function ProductForm({
           <div className="admin-form-grid">
             <label>
               <span>Retiro en local</span>
-              <textarea rows={3} value={retiroLocal} onChange={(e) => setRetiroLocal(e.target.value)} />
+              <textarea
+                rows={3}
+                value={retiroLocal}
+                onChange={(e) => setRetiroLocal(e.target.value)}
+              />
             </label>
 
             <label>
@@ -266,14 +325,32 @@ export default function ProductForm({
 
             <label>
               <span>Subir imagen</span>
-              <input type="file" accept="image/*" onChange={handleFileUpload} />
-              <small>{uploading ? "Subiendo imagen..." : "Puedes subir JPG, PNG o WEBP."}</small>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+              />
+              <small>
+                {uploading
+                  ? "Subiendo imagen..."
+                  : "Puedes subir JPG, PNG o WEBP."}
+              </small>
             </label>
 
             <div className="admin-image-preview">
               <span>Vista previa</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={previewImage} alt="Vista previa del repuesto" />
+
+              <button
+                type="button"
+                className="admin-remove-image-btn"
+                onClick={handleClearImage}
+                disabled={!imageUrl && !fileInputRef.current?.value}
+              >
+                Quitar imagen
+              </button>
             </div>
           </div>
 
@@ -297,14 +374,27 @@ export default function ProductForm({
             </label>
           </div>
 
-          {error && <p className="admin-error">{error}</p>}
+          {error ? <p className="admin-error">{error}</p> : null}
 
           <div className="admin-actions-row">
-            <button type="button" className="admin-secondary-btn" onClick={onCancel}>
+            <button
+              type="button"
+              className="admin-secondary-btn"
+              onClick={onCancel}
+            >
               Cancelar
             </button>
-            <button type="submit" className="admin-primary-btn" disabled={saving || uploading}>
-              {saving ? "Guardando..." : initialProduct ? "Guardar cambios" : "Crear repuesto"}
+
+            <button
+              type="submit"
+              className="admin-primary-btn"
+              disabled={saving || uploading}
+            >
+              {saving
+                ? "Guardando..."
+                : initialProduct
+                  ? "Guardar cambios"
+                  : "Crear repuesto"}
             </button>
           </div>
         </form>

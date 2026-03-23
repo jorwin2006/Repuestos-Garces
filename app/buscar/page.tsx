@@ -1,37 +1,37 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getProducts } from "../../lib/products";
-import type { Product } from "../../data/products";
+import { searchPublicProducts } from "../../lib/products";
 
 type Props = {
   searchParams: Promise<{
     q?: string;
+    page?: string;
   }>;
 };
 
+function buildSearchHref(query: string, page = 1) {
+  const params = new URLSearchParams();
+
+  if (query.trim()) {
+    params.set("q", query);
+  }
+
+  if (page > 1) {
+    params.set("page", String(page));
+  }
+
+  return `/buscar?${params.toString()}`;
+}
+
 export default async function BuscarPage({ searchParams }: Props) {
-  const { q = "" } = await searchParams;
-  const query = q.trim().toLowerCase();
+  const { q = "", page } = await searchParams;
+  const paginaActual = Math.max(1, Number(page) || 1);
 
-  const products = await getProducts();
-
-  const resultados: Product[] = query
-    ? products.filter((p: Product) => {
-        const texto = [
-          p.nombre,
-          p.codigoOEM ?? "",
-          p.marcaVehiculo,
-          p.categoria,
-          ...(p.compatibilidad ?? []),
-          p.descripcion ?? "",
-          p.medidas ?? "",
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return texto.includes(query);
-      })
-    : [];
+  const resultado = await searchPublicProducts({
+    query: q,
+    page: paginaActual,
+    pageSize: 12,
+  });
 
   return (
     <div className="container">
@@ -57,18 +57,18 @@ export default async function BuscarPage({ searchParams }: Props) {
         </button>
       </form>
 
-      {query === "" ? (
+      {q.trim() === "" ? (
         <p>Escribe algo para buscar.</p>
-      ) : resultados.length === 0 ? (
+      ) : resultado.items.length === 0 ? (
         <p>No se encontraron productos para: {q}</p>
       ) : (
         <>
-          <p style={{ marginBottom: "20px" }}>
-            Resultados para <strong>{q}</strong>: {resultados.length}
+          <p className="pagination-summary">
+            Resultados para <strong>{q}</strong>: {resultado.total}
           </p>
 
           <div className="grid">
-            {resultados.map((producto: Product) => (
+            {resultado.items.map((producto) => (
               <Link
                 key={producto.id}
                 href={`/producto/${producto.slug}`}
@@ -111,9 +111,7 @@ export default async function BuscarPage({ searchParams }: Props) {
                     >
                       <strong>Stock:</strong>{" "}
                       <span>
-                        {producto.stockDisponible
-                          ? "Disponible"
-                          : "No disponible"}
+                        {producto.stockDisponible ? "Disponible" : "No disponible"}
                       </span>
                     </div>
                   </div>
@@ -121,6 +119,37 @@ export default async function BuscarPage({ searchParams }: Props) {
               </Link>
             ))}
           </div>
+
+          {resultado.totalPages > 1 ? (
+            <div className="pagination">
+              <Link
+                href={buildSearchHref(q, Math.max(1, resultado.page - 1))}
+                className={`pagination-link ${
+                  resultado.page === 1 ? "disabled" : ""
+                }`}
+                aria-disabled={resultado.page === 1}
+              >
+                ← Anterior
+              </Link>
+
+              <span className="pagination-info">
+                Página {resultado.page} de {resultado.totalPages}
+              </span>
+
+              <Link
+                href={buildSearchHref(
+                  q,
+                  Math.min(resultado.totalPages, resultado.page + 1)
+                )}
+                className={`pagination-link ${
+                  resultado.page === resultado.totalPages ? "disabled" : ""
+                }`}
+                aria-disabled={resultado.page === resultado.totalPages}
+              >
+                Siguiente →
+              </Link>
+            </div>
+          ) : null}
         </>
       )}
     </div>

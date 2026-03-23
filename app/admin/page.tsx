@@ -4,18 +4,30 @@ import { useEffect, useMemo, useState } from "react";
 import ProductForm from "./ProductForm";
 import type { Product, ProductInput } from "../../lib/products";
 
+type SortOption =
+  | "updated-desc"
+  | "updated-asc"
+  | "name-asc"
+  | "name-desc"
+  | "brand-asc"
+  | "brand-desc";
+
 export default function AdminPage() {
   const [passwordInput, setPasswordInput] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("updated-desc");
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const savedPassword = window.sessionStorage.getItem("rg_admin_password");
+
     if (savedPassword) {
       setPasswordInput(savedPassword);
       setAdminPassword(savedPassword);
@@ -52,7 +64,11 @@ export default function AdminPage() {
       setProducts([]);
       window.sessionStorage.removeItem("rg_admin_password");
       setAdminPassword("");
-      setError(loadError instanceof Error ? loadError.message : "Error al cargar productos.");
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Error al cargar productos."
+      );
     } finally {
       setLoading(false);
     }
@@ -82,7 +98,10 @@ export default function AdminPage() {
   }
 
   async function handleDelete(id: string) {
-    const confirmDelete = window.confirm("¿Seguro que deseas eliminar este repuesto?");
+    const confirmDelete = window.confirm(
+      "¿Seguro que deseas eliminar este repuesto?"
+    );
+
     if (!confirmDelete) return;
 
     const response = await fetch(`/api/products?id=${id}`, {
@@ -121,14 +140,55 @@ export default function AdminPage() {
 
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return products;
 
-    return products.filter((product) => {
-      return [product.nombre, product.marcaVehiculo, product.categoria, product.codigoOEM]
-        .filter(Boolean)
-        .some((value) => typeof value === "string" && value.toLowerCase().includes(term));
+    const base = !term
+      ? products
+      : products.filter((product) => {
+          return [
+            product.nombre,
+            product.marcaVehiculo,
+            product.categoria,
+            product.codigoOEM,
+            product.telefonoWhatsApp,
+            product.telefonoAlterno,
+            product.medidas,
+            product.descripcion,
+            ...(product.compatibilidad ?? []),
+          ]
+            .filter(Boolean)
+            .some(
+              (value) =>
+                typeof value === "string" &&
+                value.toLowerCase().includes(term)
+            );
+        });
+
+    const sorted = [...base].sort((a, b) => {
+      switch (sortBy) {
+        case "name-asc":
+          return a.nombre.localeCompare(b.nombre, "es");
+        case "name-desc":
+          return b.nombre.localeCompare(a.nombre, "es");
+        case "brand-asc":
+          return a.marcaVehiculo.localeCompare(b.marcaVehiculo, "es");
+        case "brand-desc":
+          return b.marcaVehiculo.localeCompare(a.marcaVehiculo, "es");
+        case "updated-asc":
+          return (
+            new Date(a.updatedAt ?? a.createdAt ?? 0).getTime() -
+            new Date(b.updatedAt ?? b.createdAt ?? 0).getTime()
+          );
+        case "updated-desc":
+        default:
+          return (
+            new Date(b.updatedAt ?? b.createdAt ?? 0).getTime() -
+            new Date(a.updatedAt ?? a.createdAt ?? 0).getTime()
+          );
+      }
     });
-  }, [products, search]);
+
+    return sorted;
+  }, [products, search, sortBy]);
 
   if (!adminPassword) {
     return (
@@ -142,16 +202,23 @@ export default function AdminPage() {
           <div className="admin-login-form">
             <input
               type="password"
-              placeholder="Clave de administrador"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Clave de administración"
+              className="search-input"
             />
-            <button className="admin-primary-btn" onClick={() => loadProducts(passwordInput)}>
-              Entrar
+
+            <button
+              type="button"
+              className="admin-primary-btn"
+              onClick={() => loadProducts(passwordInput)}
+              disabled={!passwordInput.trim() || loading}
+            >
+              {loading ? "Entrando..." : "Entrar"}
             </button>
           </div>
 
-          {error && <p className="admin-error">{error}</p>}
+          {error ? <p className="admin-error">{error}</p> : null}
         </div>
       </div>
     );
@@ -159,7 +226,7 @@ export default function AdminPage() {
 
   return (
     <div className="container admin-page">
-      <div className="admin-header-row">
+      <div className="admin-header-card">
         <div>
           <h1 className="title">Administrador de repuestos</h1>
           <p className="subtitle">
@@ -168,10 +235,19 @@ export default function AdminPage() {
         </div>
 
         <div className="admin-header-actions">
-          <button className="admin-secondary-btn" onClick={handleLogout}>
+          <button
+            type="button"
+            className="admin-secondary-btn"
+            onClick={handleLogout}
+          >
             Salir
           </button>
-          <button className="admin-primary-btn" onClick={openCreateForm}>
+
+          <button
+            type="button"
+            className="admin-primary-btn"
+            onClick={openCreateForm}
+          >
             + Nuevo repuesto
           </button>
         </div>
@@ -179,65 +255,105 @@ export default function AdminPage() {
 
       <div className="admin-toolbar">
         <input
-          className="admin-search-input"
-          placeholder="Buscar por nombre, marca, categoría u OEM"
+          type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar por nombre, marca, categoría, OEM..."
+          className="search-input admin-toolbar-search"
         />
+
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as SortOption)}
+          className="admin-select"
+        >
+          <option value="updated-desc">Más recientes primero</option>
+          <option value="updated-asc">Más antiguos primero</option>
+          <option value="name-asc">Nombre A-Z</option>
+          <option value="name-desc">Nombre Z-A</option>
+          <option value="brand-asc">Marca A-Z</option>
+          <option value="brand-desc">Marca Z-A</option>
+        </select>
       </div>
 
-      {error && <p className="admin-error">{error}</p>}
+      <p className="admin-results-count">
+        Mostrando {filteredProducts.length} de {products.length} repuestos
+      </p>
+
+      {error ? <p className="admin-error">{error}</p> : null}
       {loading ? <p>Cargando productos...</p> : null}
 
       <div className="admin-products-grid">
         {filteredProducts.map((product) => (
-          <article key={product.id} className="admin-product-card">
-            <div className="admin-product-image-wrap">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={product.imagen} alt={product.nombre} className="admin-product-image" />
-            </div>
+          <div key={product.id} className="admin-product-card">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={product.imagen}
+              alt={product.nombre}
+              className="admin-product-thumb"
+            />
 
-            <div className="admin-product-content">
-              <h3>{product.nombre}</h3>
+            <h3>{product.nombre}</h3>
+
+            <p>
+              <strong>Marca:</strong> {product.marcaVehiculo}
+            </p>
+
+            <p>
+              <strong>Categoría:</strong> {product.categoria}
+            </p>
+
+            {product.codigoOEM ? (
               <p>
-                <strong>Marca:</strong> {product.marcaVehiculo}
+                <strong>OEM:</strong> {product.codigoOEM}
               </p>
+            ) : null}
+
+            {typeof product.stockDisponible === "boolean" ? (
               <p>
-                <strong>Categoría:</strong> {product.categoria}
+                <strong>Stock:</strong>{" "}
+                {product.stockDisponible ? "Disponible" : "No disponible"}
               </p>
-              {product.codigoOEM && (
-                <p>
-                  <strong>OEM:</strong> {product.codigoOEM}
-                </p>
-              )}
-              {typeof product.stockDisponible === "boolean" && (
-                <p>
-                  <strong>Stock:</strong>{" "}
-                  {product.stockDisponible ? "Disponible" : "No disponible"}
-                </p>
-              )}
-              <p>
-                <strong>Público:</strong> {product.mostrarInfoPublica === false ? "No" : "Sí"}
-              </p>
-            </div>
+            ) : null}
+
+            <p>
+              <strong>Público:</strong>{" "}
+              {product.mostrarInfoPublica === false ? "No" : "Sí"}
+            </p>
+
+            <p>
+              <strong>Actualizado:</strong>{" "}
+              {product.updatedAt
+                ? new Date(product.updatedAt).toLocaleString("es-EC")
+                : "—"}
+            </p>
 
             <div className="admin-card-actions">
-              <button className="admin-secondary-btn" onClick={() => openEditForm(product)}>
+              <button
+                type="button"
+                className="admin-secondary-btn"
+                onClick={() => openEditForm(product)}
+              >
                 Editar
               </button>
-              <button className="admin-danger-btn" onClick={() => handleDelete(product.id)}>
+
+              <button
+                type="button"
+                className="admin-danger-btn"
+                onClick={() => handleDelete(product.id)}
+              >
                 Eliminar
               </button>
             </div>
-          </article>
+          </div>
         ))}
       </div>
 
-      {!loading && filteredProducts.length === 0 && (
+      {!loading && filteredProducts.length === 0 ? (
         <p>No se encontraron repuestos con ese criterio.</p>
-      )}
+      ) : null}
 
-      {isFormOpen && (
+      {isFormOpen ? (
         <ProductForm
           initialProduct={editingProduct}
           adminPassword={adminPassword}
@@ -247,7 +363,7 @@ export default function AdminPage() {
           }}
           onSave={handleSave}
         />
-      )}
+      ) : null}
     </div>
   );
 }
