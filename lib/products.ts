@@ -1,10 +1,8 @@
 import { randomUUID } from "crypto";
-import { promises as fs } from "fs";
-import path from "path";
+import { sql } from "./db";
 import {
   DEFAULT_DELIVERY_INFO,
   DEFAULT_PHONE,
-  seedProducts,
   type DeliveryInfo,
   type Product,
 } from "../data/products";
@@ -29,9 +27,28 @@ export type ProductInput = {
   mostrarMensajeWhatsApp?: boolean;
 };
 
-const DATA_FILE = path.join(process.cwd(), "data", "products.json");
-
 export { DEFAULT_DELIVERY_INFO, DEFAULT_PHONE };
+
+type ProductRow = {
+  id: string;
+  slug: string;
+  nombre: string;
+  marca_vehiculo: string;
+  categoria: string;
+  imagen: string;
+  codigo_oem: string | null;
+  stock_disponible: boolean | null;
+  compatibilidad: string[] | null;
+  mostrar_info_publica: boolean;
+  mostrar_mensaje_whatsapp: boolean;
+  telefono_whatsapp: string | null;
+  telefono_alterno: string | null;
+  medidas: string | null;
+  descripcion: string | null;
+  envios: DeliveryInfo | null;
+  created_at: string;
+  updated_at: string;
+};
 
 function normalizeText(value?: string | null): string | undefined {
   const cleaned = value?.trim();
@@ -59,37 +76,65 @@ function slugify(value: string): string {
     .replace(/-{2,}/g, "-");
 }
 
-async function ensureDataFile() {
-  try {
-    await fs.access(DATA_FILE);
-  } catch {
-    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-    await fs.writeFile(DATA_FILE, JSON.stringify(seedProducts, null, 2), "utf8");
+function mapRowToProduct(row: ProductRow): Product {
+  return {
+    id: row.id,
+    slug: row.slug,
+    nombre: row.nombre,
+    marcaVehiculo: row.marca_vehiculo,
+    categoria: row.categoria,
+    imagen: row.imagen,
+    codigoOEM: row.codigo_oem ?? undefined,
+    stockDisponible: row.stock_disponible ?? undefined,
+    compatibilidad: row.compatibilidad ?? undefined,
+    mostrarInfoPublica: row.mostrar_info_publica,
+    mostrarMensajeWhatsApp: row.mostrar_mensaje_whatsapp,
+    telefonoWhatsApp: row.telefono_whatsapp ?? DEFAULT_PHONE,
+    telefonoAlterno: row.telefono_alterno ?? undefined,
+    medidas: row.medidas ?? undefined,
+    descripcion: row.descripcion ?? undefined,
+    envios: row.envios ?? DEFAULT_DELIVERY_INFO,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+async function findById(id: string): Promise<Product | undefined> {
+  const rows = (await sql`
+    SELECT *
+    FROM products
+    WHERE id = ${id}
+    LIMIT 1
+  `) as ProductRow[];
+
+  return rows[0] ? mapRowToProduct(rows[0]) : undefined;
+}
+
+async function slugExists(slug: string, currentId?: string) {
+  if (currentId) {
+    const rows = await sql`
+      SELECT id
+      FROM products
+      WHERE slug = ${slug} AND id <> ${currentId}
+      LIMIT 1
+    `;
+    return rows.length > 0;
   }
+
+  const rows = await sql`
+    SELECT id
+    FROM products
+    WHERE slug = ${slug}
+    LIMIT 1
+  `;
+  return rows.length > 0;
 }
 
-export async function getProducts(): Promise<Product[]> {
-  await ensureDataFile();
-  const raw = await fs.readFile(DATA_FILE, "utf8");
-
-  try {
-    const parsed = JSON.parse(raw) as Product[];
-    return parsed.sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
-  } catch {
-    await fs.writeFile(DATA_FILE, JSON.stringify(seedProducts, null, 2), "utf8");
-    return [...seedProducts].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
-  }
-}
-
-async function saveProducts(products: Product[]) {
-  await fs.writeFile(DATA_FILE, JSON.stringify(products, null, 2), "utf8");
-}
-
-function buildUniqueSlug(baseSlug: string, products: Product[], currentId?: string) {
+async function buildUniqueSlug(baseSlug: string, currentId?: string) {
   let slug = baseSlug;
   let counter = 2;
 
-  while (products.some((item) => item.slug === slug && item.id !== currentId)) {
+  while (await slugExists(slug, currentId)) {
     slug = `${baseSlug}-${counter}`;
     counter += 1;
   }
@@ -97,12 +142,24 @@ function buildUniqueSlug(baseSlug: string, products: Product[], currentId?: stri
   return slug;
 }
 
+export async function getProducts(): Promise<Product[]> {
+  const rows = (await sql`
+    SELECT *
+    FROM products
+    ORDER BY nombre ASC
+  `) as ProductRow[];
+
+  return rows.map(mapRowToProduct);
+}
+
 export async function upsertProduct(input: ProductInput): Promise<Product> {
-  const products = await getProducts();
   const now = new Date().toISOString();
-  const existing = input.id ? products.find((item) => item.id === input.id) : undefined;
-  const baseSlug = slugify(input.nombre || existing?.nombre || `producto-${Date.now()}`);
-  const slug = buildUniqueSlug(baseSlug, products, existing?.id);
+  const existing = input.id ? await findById(input.id) : undefined;
+
+  const baseSlug = slugify(
+    input.nombre || existing?.nombre || `producto-${Date.now()}`
+  );
+  const slug = await buildUniqueSlug(baseSlug, existing?.id);
 
   const normalizedProduct: Product = {
     id: existing?.id ?? randomUUID(),
@@ -110,10 +167,16 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
     nombre: input.nombre.trim(),
     marcaVehiculo: input.marcaVehiculo.trim(),
     categoria: input.categoria.trim(),
-    imagen: normalizeText(input.imagen) ?? existing?.imagen ?? "/products/placeholder.svg",
+    imagen:
+      normalizeText(input.imagen) ??
+      existing?.imagen ??
+      "/products/placeholder.svg",
     codigoOEM: normalizeText(input.codigoOEM),
     stockDisponible: input.stockDisponible,
-    telefonoWhatsApp: normalizeText(input.telefonoWhatsApp) ?? existing?.telefonoWhatsApp ?? DEFAULT_PHONE,
+    telefonoWhatsApp:
+      normalizeText(input.telefonoWhatsApp) ??
+      existing?.telefonoWhatsApp ??
+      DEFAULT_PHONE,
     telefonoAlterno: normalizeText(input.telefonoAlterno),
     medidas: normalizeText(input.medidas),
     descripcion: normalizeText(input.descripcion),
@@ -132,25 +195,87 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
         existing?.envios?.enviosNacionales ??
         DEFAULT_DELIVERY_INFO.enviosNacionales,
     },
-    mostrarInfoPublica: input.mostrarInfoPublica ?? existing?.mostrarInfoPublica ?? true,
+    mostrarInfoPublica:
+      input.mostrarInfoPublica ?? existing?.mostrarInfoPublica ?? true,
     mostrarMensajeWhatsApp:
       input.mostrarMensajeWhatsApp ?? existing?.mostrarMensajeWhatsApp ?? true,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };
 
-  const updatedProducts = existing
-    ? products.map((item) => (item.id === existing.id ? normalizedProduct : item))
-    : [...products, normalizedProduct];
+  await sql`
+    INSERT INTO products (
+      id,
+      slug,
+      nombre,
+      marca_vehiculo,
+      categoria,
+      imagen,
+      codigo_oem,
+      stock_disponible,
+      compatibilidad,
+      mostrar_info_publica,
+      mostrar_mensaje_whatsapp,
+      telefono_whatsapp,
+      telefono_alterno,
+      medidas,
+      descripcion,
+      envios,
+      created_at,
+      updated_at
+    )
+    VALUES (
+      ${normalizedProduct.id},
+      ${normalizedProduct.slug},
+      ${normalizedProduct.nombre},
+      ${normalizedProduct.marcaVehiculo},
+      ${normalizedProduct.categoria},
+      ${normalizedProduct.imagen},
+      ${normalizedProduct.codigoOEM ?? null},
+      ${typeof normalizedProduct.stockDisponible === "boolean"
+        ? normalizedProduct.stockDisponible
+        : null},
+      ${JSON.stringify(normalizedProduct.compatibilidad ?? [])}::jsonb,
+      ${normalizedProduct.mostrarInfoPublica ?? true},
+      ${normalizedProduct.mostrarMensajeWhatsApp ?? true},
+      ${normalizedProduct.telefonoWhatsApp ?? DEFAULT_PHONE},
+      ${normalizedProduct.telefonoAlterno ?? null},
+      ${normalizedProduct.medidas ?? null},
+      ${normalizedProduct.descripcion ?? null},
+      ${JSON.stringify(
+        normalizedProduct.envios ?? DEFAULT_DELIVERY_INFO
+      )}::jsonb,
+      ${normalizedProduct.createdAt},
+      ${normalizedProduct.updatedAt}
+    )
+    ON CONFLICT (id)
+    DO UPDATE SET
+      slug = EXCLUDED.slug,
+      nombre = EXCLUDED.nombre,
+      marca_vehiculo = EXCLUDED.marca_vehiculo,
+      categoria = EXCLUDED.categoria,
+      imagen = EXCLUDED.imagen,
+      codigo_oem = EXCLUDED.codigo_oem,
+      stock_disponible = EXCLUDED.stock_disponible,
+      compatibilidad = EXCLUDED.compatibilidad,
+      mostrar_info_publica = EXCLUDED.mostrar_info_publica,
+      mostrar_mensaje_whatsapp = EXCLUDED.mostrar_mensaje_whatsapp,
+      telefono_whatsapp = EXCLUDED.telefono_whatsapp,
+      telefono_alterno = EXCLUDED.telefono_alterno,
+      medidas = EXCLUDED.medidas,
+      descripcion = EXCLUDED.descripcion,
+      envios = EXCLUDED.envios,
+      updated_at = EXCLUDED.updated_at
+  `;
 
-  await saveProducts(updatedProducts);
   return normalizedProduct;
 }
 
 export async function removeProduct(id: string) {
-  const products = await getProducts();
-  const updated = products.filter((item) => item.id !== id);
-  await saveProducts(updated);
+  await sql`
+    DELETE FROM products
+    WHERE id = ${id}
+  `;
 }
 
 export function sanitizePhoneNumber(phone?: string | null) {
