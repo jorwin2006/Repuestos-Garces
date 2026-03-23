@@ -1,5 +1,4 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 
 function sanitizeFileName(fileName: string) {
@@ -19,11 +18,7 @@ function isAuthorized(request: NextRequest) {
   const provided = request.headers.get("x-admin-password");
 
   if (!adminPassword) {
-    return {
-      ok: false,
-      reason:
-        "Falta configurar ADMIN_PASSWORD en el archivo .env.local antes de usar el panel administrador.",
-    };
+    return { ok: false, reason: "Falta configurar ADMIN_PASSWORD." };
   }
 
   if (provided !== adminPassword) {
@@ -35,6 +30,7 @@ function isAuthorized(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const auth = isAuthorized(request);
+
   if (!auth.ok) {
     return NextResponse.json({ error: auth.reason }, { status: 401 });
   }
@@ -44,7 +40,10 @@ export async function POST(request: NextRequest) {
     const image = formData.get("image");
 
     if (!(image instanceof File)) {
-      return NextResponse.json({ error: "No se recibió ninguna imagen." }, { status: 400 });
+      return NextResponse.json(
+        { error: "No se recibió ninguna imagen." },
+        { status: 400 }
+      );
     }
 
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
@@ -55,16 +54,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const bytes = Buffer.from(await image.arrayBuffer());
     const safeName = `${Date.now()}-${sanitizeFileName(image.name)}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "products");
-    const filePath = path.join(uploadDir, safeName);
 
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.writeFile(filePath, bytes);
+    const blob = await put(`products/${safeName}`, image, {
+      access: "public",
+      addRandomSuffix: true,
+    });
 
-    return NextResponse.json({ imageUrl: `/uploads/products/${safeName}` });
-  } catch {
-    return NextResponse.json({ error: "No se pudo subir la imagen." }, { status: 500 });
+    return NextResponse.json({
+      imageUrl: blob.url,
+      pathname: blob.pathname,
+    });
+  } catch (error) {
+    console.error("Error subiendo imagen a Blob:", error);
+
+    return NextResponse.json(
+      { error: "No se pudo subir la imagen." },
+      { status: 500 }
+    );
   }
 }

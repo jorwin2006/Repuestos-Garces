@@ -43,5 +43,46 @@
     "mostrarMensajeWhatsApp": true,
     "createdAt": "2026-03-20T00:00:00.000Z",
     "updatedAt": "2026-03-20T17:20:11.905Z"
+  },
+  {
+    "id": "2b45ac4d-b631-42b4-b7d3-d7ee19b16503",
+    "slug": "mm",
+    "nombre": "MM",
+    "marcaVehiculo": "NISSAN",
+    "categoria": "BR",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1774278671417-captura-de-pantalla-2026-02-17-163902-HlBflMcQtGJsNlfEslzG3hFrFH4Oke.png",
+    "stockDisponible": true,
+    "telefonoWhatsApp": "593991657178",
+    "envios": {
+      "retiroLocal": "Repuestos Garces - Santo Domingo, Av. Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE.",
+      "deliveryLocal": "Coordinado por WhatsApp.",
+      "enviosNacionales": "Por encomienda en buses interprovinciales; el cliente debe retirar en el terminal designado de su ciudad."
+    },
+    "mostrarInfoPublica": true,
+    "mostrarMensajeWhatsApp": true,
+    "createdAt": "2026-03-23T15:11:13.357Z",
+    "updatedAt": "2026-03-23T15:11:40.861Z"
+  },
+  {
+    "id": "e9ff5f95-bcc5-45d1-869f-ffe67860543b",
+    "slug": "moto",
+    "nombre": "MOTO",
+    "marcaVehiculo": "Isuzu",
+    "categoria": "MOTO",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1774278559732-chatgpt-image-17-ene-2026-11_06_06-ZaxvOs7ElAstX9g7lB19Tai8YdH7Vn.png",
+    "stockDisponible": true,
+    "telefonoWhatsApp": "593991657178",
+    "compatibilidad": [
+      "Suzuki Hayabusa"
+    ],
+    "envios": {
+      "retiroLocal": "Repuestos Garces - Santo Domingo, Av. Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE.",
+      "deliveryLocal": "Coordinado por WhatsApp.",
+      "enviosNacionales": "Por encomienda en buses interprovinciales; el cliente debe retirar en el terminal designado de su ciudad."
+    },
+    "mostrarInfoPublica": true,
+    "mostrarMensajeWhatsApp": true,
+    "createdAt": "2026-03-23T15:09:25.499Z",
+    "updatedAt": "2026-03-23T15:09:25.499Z"
   }
 ]

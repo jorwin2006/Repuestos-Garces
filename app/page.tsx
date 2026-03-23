@@ -32,7 +32,8 @@ export default function Home() {
                 alt={`Logo ${marca.name}`}
                 width={240}
                 height={130}
-                style={{ objectFit: "contain" }}
+                className="brand-logo"
+                sizes="(max-width: 768px) 80vw, 240px"
                 priority
               />
             </div>

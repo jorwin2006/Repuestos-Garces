@@ -1222,3 +1222,61 @@ section h2 {
     padding: 18px;
   }
 }
+
+.card-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 180px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  max-width: 260px;
+  max-height: 160px;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 18px;
+    gap: 16px;
+  }
+
+  .card-image {
+    height: 150px;
+    margin-bottom: 4px;
+  }
+
+  .brand-logo {
+    max-width: 220px;
+    max-height: 130px;
+  }
+
+  .card-name {
+    font-size: 15px;
+    line-height: 1.3;
+    text-align: center;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-image {
+    height: 130px;
+  }
+
+  .brand-logo {
+    max-width: 200px;
+    max-height: 115px;
+  }
+
+  .card-name {
+    font-size: 14px;
+  }
+}
