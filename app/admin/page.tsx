@@ -293,57 +293,87 @@ export default function AdminPage() {
               className="admin-product-thumb"
             />
 
-            <h3>{product.nombre}</h3>
+            <div className="admin-product-body">
+              <h3 className="admin-product-title">{product.nombre}</h3>
 
-            <p>
-              <strong>Marca:</strong> {product.marcaVehiculo}
-            </p>
+              <div className="admin-meta-list">
+                <div className="admin-meta-row">
+                  <span className="admin-meta-label">Marca</span>
+                  <span className="admin-meta-value">{product.marcaVehiculo}</span>
+                </div>
 
-            <p>
-              <strong>Categoría:</strong> {product.categoria}
-            </p>
+                <div className="admin-meta-row">
+                  <span className="admin-meta-label">Categoría</span>
+                  <span className="admin-meta-value">{product.categoria}</span>
+                </div>
 
-            {product.codigoOEM ? (
-              <p>
-                <strong>OEM:</strong> {product.codigoOEM}
-              </p>
-            ) : null}
+                {product.codigoOEM ? (
+                  <div className="admin-meta-row">
+                    <span className="admin-meta-label">OEM</span>
+                    <span className="admin-meta-value">{product.codigoOEM}</span>
+                  </div>
+                ) : null}
 
-            {typeof product.stockDisponible === "boolean" ? (
-              <p>
-                <strong>Stock:</strong>{" "}
-                {product.stockDisponible ? "Disponible" : "No disponible"}
-              </p>
-            ) : null}
+                <div className="admin-meta-row">
+                  <span className="admin-meta-label">Estado</span>
+                  <span className="admin-meta-value">
+                    {typeof product.stockDisponible === "boolean" ? (
+                      <span
+                        className={`admin-status-badge ${
+                          product.stockDisponible ? "is-ok" : "is-no"
+                        }`}
+                      >
+                        {product.stockDisponible ? "Disponible" : "No disponible"}
+                      </span>
+                    ) : (
+                      <span className="admin-muted">No visible</span>
+                    )}
+                  </span>
+                </div>
 
-            <p>
-              <strong>Público:</strong>{" "}
-              {product.mostrarInfoPublica === false ? "No" : "Sí"}
-            </p>
+                <div className="admin-meta-row">
+                  <span className="admin-meta-label">Público</span>
+                  <span className="admin-meta-value">
+                    <span
+                      className={`admin-status-badge ${
+                        product.mostrarInfoPublica === false ? "is-no" : "is-ok"
+                      }`}
+                    >
+                      {product.mostrarInfoPublica === false ? "No" : "Sí"}
+                    </span>
+                  </span>
+                </div>
 
-            <p>
-              <strong>Actualizado:</strong>{" "}
-              {product.updatedAt
-                ? new Date(product.updatedAt).toLocaleString("es-EC")
-                : "—"}
-            </p>
+                <div className="admin-meta-row admin-meta-row-date">
+                  <span className="admin-meta-label">Actualizado</span>
+                  <span className="admin-meta-value">
+                    {product.updatedAt
+                      ? new Date(product.updatedAt).toLocaleString("es-EC", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })
+                      : "—"}
+                  </span>
+                </div>
+              </div>
 
-            <div className="admin-card-actions">
-              <button
-                type="button"
-                className="admin-secondary-btn"
-                onClick={() => openEditForm(product)}
-              >
-                Editar
-              </button>
+              <div className="admin-card-actions">
+                <button
+                  type="button"
+                  className="admin-secondary-btn"
+                  onClick={() => openEditForm(product)}
+                >
+                  Editar
+                </button>
 
-              <button
-                type="button"
-                className="admin-danger-btn"
-                onClick={() => handleDelete(product.id)}
-              >
-                Eliminar
-              </button>
+                <button
+                  type="button"
+                  className="admin-danger-btn"
+                  onClick={() => handleDelete(product.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
         ))}
