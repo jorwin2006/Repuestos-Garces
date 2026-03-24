@@ -17,11 +17,22 @@ export default function Home() {
   ];
 
   return (
-    <div className="container">
-      <h1 className="title">Repuestos Garces</h1>
-      <p className="subtitle">
-        Selecciona tu marca para ver los repuestos organizados por categorías.
-      </p>
+    <div
+    style={{
+      minHeight: "100vh",
+      backgroundImage:
+        "linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), url('/hero/home-premium.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+    }}
+    >
+      <div className="home-intro">
+        <h1 className="title">Repuestos Garces</h1>
+        <p className="subtitle">
+          Selecciona tu marca para ver los repuestos organizados por categorías.
+        </p>
+      </div>
 
       <div className="grid">
         {marcas.map((marca) => (
