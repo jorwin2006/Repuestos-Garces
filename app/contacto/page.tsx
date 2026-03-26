@@ -57,7 +57,7 @@ export default function ContactoPage() {
       </section>
 
       <section className="contact-grid contact-grid--enhanced">
-        <article className="contact-card contact-card--accent">
+        <article className="contact-card contact-card--accent contact-card--whatsapp-premium">
           <h2>WhatsApp</h2>
 
           <ul className="contact-detail-list">
@@ -207,7 +207,8 @@ export default function ContactoPage() {
 </div>
       </section>
 
-      <section className="contact-bottom-cta">
+    <section className="contact-bottom-cta contact-bottom-cta--premium">
+      <div className="contact-bottom-cta-content">
         <h2>¿Ya tienes la referencia del repuesto?</h2>
         <p>
           Envíanos el código OEM o una foto por WhatsApp y te ayudamos a
@@ -222,6 +223,7 @@ export default function ContactoPage() {
         >
           Cotizar ahora
         </a>
+      </div>
       </section>
     </div>
   );

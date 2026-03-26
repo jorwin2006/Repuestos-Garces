@@ -1604,9 +1604,17 @@ section h2 {
 }
 
 .contact-hero-copy {
+  position: relative;
+  overflow: hidden;
   padding: 36px;
   border-radius: 24px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.88) 0%, rgba(17, 24, 39, 0.82) 100%);
+  background:
+        linear-gradient(90deg, rgba(4, 12, 28, 0.82) 0%, rgba(4, 12, 28, 0.56) 42%, rgba(4, 12, 28, 0.34) 100%),
+
+
+    url("/contacto-premium-bg.png");
+  background-size: cover;
+  background-position: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     0 18px 50px rgba(0, 0, 0, 0.28),
@@ -1630,15 +1638,16 @@ section h2 {
   font-size: clamp(2.2rem, 4vw, 3.5rem);
   line-height: 1.05;
   letter-spacing: -0.03em;
-  text-shadow: none;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
 }
 
 .contact-subtitle {
   max-width: 650px;
   margin-bottom: 22px;
-  color: rgba(226, 232, 240, 0.82);
+  color: rgba(226, 232, 240, 0.9);
   font-size: 1.05rem;
   line-height: 1.7;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.18);
 }
 
 .contact-hero-actions {
@@ -1692,10 +1701,18 @@ section h2 {
 
 /* Variante para fondo claro */
 .contact-secondary-btn--light {
-  border: 1px solid rgba(148, 163, 184, 0.25);
+  border: 1px solid rgba(148, 163, 184, 0.22);
   color: #0f3f91;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+  background: linear-gradient(180deg, rgba(255,255,255,0.86) 0%, rgba(248,250,252,0.92) 100%);
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.72);
+}
+
+.contact-secondary-btn--light:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 63, 145, 0.24);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
 .contact-secondary-btn--light:hover {
@@ -1705,10 +1722,20 @@ section h2 {
 }
 
 .contact-highlight {
+  position: relative;
+  overflow: hidden;
   padding: 30px;
   border-radius: 24px;
   background:
-    linear-gradient(160deg, rgba(21, 71, 160, 0.95) 0%, rgba(10, 33, 79, 0.96) 100%);
+    linear-gradient(
+      135deg,
+      rgba(8, 20, 44, 0.78) 0%,
+      rgba(14, 49, 126, 0.62) 52%,
+      rgba(9, 28, 76, 0.74) 100%
+    ),
+    url("/contacto-premium-bg.png");
+  background-size: cover;
+  background-position: right center;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     0 18px 50px rgba(0, 0, 0, 0.28),
@@ -1716,17 +1743,51 @@ section h2 {
   color: #fff;
 }
 
+.contact-highlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(6, 14, 32, 0.26) 0%,
+      rgba(6, 14, 32, 0.12) 35%,
+      rgba(6, 14, 32, 0.34) 100%
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contact-highlight > * {
+  position: relative;
+  z-index: 1;
+}
+
 .contact-highlight h2 {
   margin: 12px 0 14px;
   font-size: 2rem;
-  line-height: 1.15;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
   color: #f8fbff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.24);
 }
-
 .contact-highlight p {
   margin: 0 0 20px;
   line-height: 1.75;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.18);
+}
+
+.contact-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 700;
+  color: #eef5ff;
+  backdrop-filter: blur(6px);
 }
 
 
@@ -1740,9 +1801,12 @@ section h2 {
 .contact-pill-list span {
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 13px;
   font-weight: 600;
+  color: #eef5ff;
+  backdrop-filter: blur(6px);
 }
 
 .contact-grid--enhanced {
@@ -1799,9 +1863,17 @@ section h2 {
 .contact-location-card {
   display: grid;
   grid-template-columns: 0.95fr 1.05fr;
-  gap: 24px;
-  padding: 24px;
+  gap: 26px;
+  padding: 26px;
   margin-top: 28px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow:
+    0 22px 55px rgba(2, 8, 23, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  position: relative;
+  overflow: hidden;
 }
 
 .contact-location-copy {
@@ -1811,14 +1883,17 @@ section h2 {
 .contact-location-copy h2 {
   margin-top: 0;
   margin-bottom: 14px;
-  font-size: 30px;
-  color: var(--azul-principal);
+  font-size: 32px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #0f3f91;
 }
 
 .contact-location-copy > p {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   color: #4b5563;
-  line-height: 1.7;
+  line-height: 1.75;
+  max-width: 560px;
 }
 
 .contact-location-actions {
@@ -1840,14 +1915,25 @@ section h2 {
 }
 
 .contact-map-wrap {
-  min-height: 400px;
-  border-radius: 22px;
+  min-height: 420px;
+  border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.18);
   background: #e2e8f0;
   box-shadow:
-    0 14px 35px rgba(15, 23, 42, 0.10),
-    inset 0 1px 0 rgba(255,255,255,0.45);
+    0 18px 40px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+  position: relative;
+}
+
+.contact-map-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .contact-map {
@@ -1990,4 +2076,168 @@ section h2 {
 .contact-card-content {
   position: relative;
   z-index: 2;
+}
+
+.contact-card--whatsapp-premium {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f8fafc 0%, #f2f7f4 100%);
+  border: 1px solid rgba(34, 197, 94, 0.12);
+  box-shadow:
+    0 18px 50px rgba(2, 8, 23, 0.18),
+    inset 3px 0 0 rgba(34, 197, 94, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.contact-card--whatsapp-premium::before {
+  content: "";
+  position: absolute;
+  left: -70px;
+  bottom: -70px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(
+    circle,
+    rgba(34, 197, 94, 0.14) 0%,
+    rgba(34, 197, 94, 0.07) 34%,
+    rgba(34, 197, 94, 0.02) 56%,
+    transparent 72%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 0;
+  animation: whatsappGlow 5.5s ease-in-out infinite;
+}
+
+.contact-card--whatsapp-premium::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 28px;
+  width: 180px;
+  height: 180px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%2322c55e' stroke-width='8' opacity='0.22'%3E%3Cpath d='M58 74h88c18 0 32 14 32 32v20c0 18-14 32-32 32h-38l-26 22 6-22H58c-18 0-32-14-32-32v-20c0-18 14-32 32-32z'/%3E%3Cpath d='M126 48h34c18 0 32 14 32 32v18'/%3E%3Ccircle cx='84' cy='116' r='4' fill='%2322c55e' stroke='none'/%3E%3Ccircle cx='104' cy='116' r='4' fill='%2322c55e' stroke='none'/%3E%3Ccircle cx='124' cy='116' r='4' fill='%2322c55e' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.92;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contact-card--whatsapp-premium > * {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-card--whatsapp-premium h2 {
+  margin-bottom: 12px;
+}
+
+.contact-card--whatsapp-premium .whatsapp-btn {
+  box-shadow: 0 12px 28px rgba(34, 197, 94, 0.22);
+}
+
+@keyframes whatsappGlow {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+}
+
+.contact-location-card::before {
+  content: "";
+  position: absolute;
+  left: -120px;
+  bottom: -120px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(
+    circle,
+    rgba(29, 78, 216, 0.08) 0%,
+    rgba(29, 78, 216, 0.04) 34%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contact-location-copy,
+.contact-map-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-bottom-cta--premium {
+  position: relative;
+  overflow: hidden;
+  min-height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 18, 36, 0.50) 0%,
+      rgba(10, 23, 45, 0.58) 100%
+    ),
+    url("/cta-premium.png");
+  background-size: cover;
+  background-position: center;
+  box-shadow:
+    0 24px 55px rgba(2, 8, 23, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.contact-bottom-cta--premium::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 30%),
+    linear-gradient(
+      90deg,
+      rgba(7, 18, 36, 0.34) 0%,
+      rgba(7, 18, 36, 0.18) 45%,
+      rgba(7, 18, 36, 0.30) 100%
+    );
+  pointer-events: none;
+}
+
+.contact-bottom-cta-content {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  text-align: center;
+  padding: 36px 24px;
+}
+
+.contact-bottom-cta--premium h2 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: #f8fafc;
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.contact-bottom-cta--premium p {
+  max-width: 760px;
+  margin: 0 auto 24px;
+  color: rgba(226, 232, 240, 0.88);
+  line-height: 1.75;
+  font-size: 1.08rem;
+}
+
+.contact-bottom-cta--premium .whatsapp-btn {
+  min-width: 260px;
+  box-shadow: 0 16px 30px rgba(34, 197, 94, 0.26);
 }
