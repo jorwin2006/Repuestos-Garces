@@ -31,6 +31,21 @@ function buildMarcaHref(marca: string, sistema?: string | null, page = 1) {
   return `/marca/${encodeURIComponent(marca)}${query ? `?${query}` : ""}`;
 }
 
+function getProductHook(producto: {
+  codigoOEM?: string | null;
+  stockDisponible?: boolean | null;
+}) {
+  if (producto.codigoOEM) {
+    return `Consulta OEM ${producto.codigoOEM} y compatibilidad.`;
+  }
+
+  if (producto.stockDisponible === true) {
+    return "Disponible para consulta inmediata.";
+  }
+
+  return "Ver compatibilidad y detalles antes de cotizar.";
+}
+
 export default async function MarcaPage({ params, searchParams }: Props) {
   const { marca } = await params;
   const { sistema, page } = await searchParams;
@@ -53,129 +68,165 @@ export default async function MarcaPage({ params, searchParams }: Props) {
   });
 
   return (
-    <div className="container">
-      <p style={{ marginBottom: "20px" }}>
-        <Link href="/">← Volver al inicio</Link>
-      </p>
-
-      <h1 className="title">Marca: {marcaDecodificada}</h1>
-      <p className="subtitle">Repuestos organizados por categorías.</p>
-
-      <div className="category-filters">
-        <Link
-          href={buildMarcaHref(marcaDecodificada, null, 1)}
-          className={`category-filter ${!sistemaActivo ? "active" : ""}`}
-        >
-          Todos
-        </Link>
-
-        {categorias.map((cat) => (
-          <Link
-            key={cat}
-            href={buildMarcaHref(marcaDecodificada, cat, 1)}
-            className={`category-filter ${sistemaActivo === cat ? "active" : ""}`}
-          >
-            {cat}
-          </Link>
-        ))}
-      </div>
-
-      <p className="pagination-summary">
-        Mostrando {resultado.items.length} de {resultado.total} repuestos
-      </p>
-
-      {resultado.items.length === 0 ? (
-        <p>
-          No hay productos
-          {sistemaActivo ? ` en la categoría "${sistemaActivo}"` : ""} para esta
-          marca.
-        </p>
-      ) : (
-        <div className="grid">
-          {resultado.items.map((producto) => (
+    <div className="premium-page">
+      <div
+        className="premium-content"
+        style={{ width: "100%", maxWidth: "none", padding: "0 1.5rem" }}
+      >
+        <div className="premium-hero premium-hero--expanded">
+          <div style={{ marginBottom: "1.5rem" }}>
             <Link
-              key={producto.id}
-              href={`/producto/${producto.slug}`}
-              className="card product-card-link"
+              href="/"
+              style={{ color: "#3b82f6", textDecoration: "none", fontWeight: 500 }}
             >
-              <div className="product-card-image-wrap">
-                <Image
-                  src={producto.imagen}
-                  alt={producto.nombre}
-                  width={300}
-                  height={220}
-                  className="product-card-image"
-                />
-              </div>
-
-              <h3 className="product-card-title">{producto.nombre}</h3>
-
-              {producto.codigoOEM ? (
-                <p className="product-card-meta">
-                  <strong>Código OEM:</strong> {producto.codigoOEM}
-                </p>
-              ) : null}
-
-              {producto.mostrarMensajeWhatsApp !== false ? (
-                <p className="product-card-whatsapp-copy">
-                  Consulta precio y disponibilidad por WhatsApp
-                </p>
-              ) : null}
-
-              {typeof producto.stockDisponible === "boolean" ? (
-                <div className="stock-chip-wrap">
-                  <div
-                    className={`stock-chip ${
-                      producto.stockDisponible ? "in-stock" : "out-stock"
-                    }`}
-                  >
-                    <strong>Stock:</strong>{" "}
-                    <span>
-                      {producto.stockDisponible ? "Disponible" : "No disponible"}
-                    </span>
-                  </div>
-                </div>
-              ) : null}
+              ← Volver al inicio
             </Link>
-          ))}
-        </div>
-      )}
+          </div>
 
-      {resultado.totalPages > 1 ? (
-        <div className="pagination">
-          <Link
-            href={buildMarcaHref(
-              marcaDecodificada,
-              sistemaActivo,
-              Math.max(1, resultado.page - 1)
-            )}
-            className={`pagination-link ${
-              resultado.page === 1 ? "disabled" : ""
-            }`}
-            aria-disabled={resultado.page === 1}
+          <h1
+            className="premium-section-title"
+            style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}
           >
-            ← Anterior
-          </Link>
+            Marca: {marcaDecodificada}
+          </h1>
 
-          <span className="pagination-info">
-            Página {resultado.page} de {resultado.totalPages}
-          </span>
+          <p className="brand-page-lead">
+            Repuestos {marcaDecodificada} seleccionados para sistemas clave.
+            Consulta compatibilidad y disponibilidad antes de cotizar.
+          </p>
 
-          <Link
-            href={buildMarcaHref(
-              marcaDecodificada,
-              sistemaActivo,
-              Math.min(resultado.totalPages, resultado.page + 1)
-            )}
-            className={`pagination-link ${
-              resultado.page === resultado.totalPages ? "disabled" : ""
-            }`}
-            aria-disabled={resultado.page === resultado.totalPages}
+          <div className="premium-filters">
+            <Link
+              href={buildMarcaHref(marcaDecodificada, null, 1)}
+              className={`premium-chip ${!sistemaActivo ? "active" : ""}`}
+            >
+              Todos
+            </Link>
+
+            {categorias.map((cat) => (
+              <Link
+                key={cat}
+                href={buildMarcaHref(marcaDecodificada, cat, 1)}
+                className={`premium-chip ${sistemaActivo === cat ? "active" : ""}`}
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+
+          <div className="brand-trust-strip">
+            <span className="brand-trust-pill">Atención rápida</span>
+            <span className="brand-trust-pill">Envíos nacionales</span>
+            <span className="brand-trust-pill">Retiro en local</span>
+          </div>
+
+          <p
+            className="premium-muted"
+            style={{ margin: "1.2rem 0 1.1rem 0", fontSize: "0.9rem" }}
           >
-            Siguiente →
-          </Link>
+            Mostrando {resultado.items.length} de {resultado.total} repuestos
+          </p>
+
+          {resultado.items.length === 0 ? (
+            <p className="premium-muted">
+              No hay productos
+              {sistemaActivo ? ` en la categoría "${sistemaActivo}"` : ""} para
+              esta marca.
+            </p>
+          ) : (
+            <div className="premium-grid">
+              {resultado.items.map((producto) => (
+                <Link
+                  key={producto.id}
+                  href={`/producto/${producto.slug}`}
+                  className="premium-card premium-product-card"
+                >
+                  <div className="premium-image-frame">
+                    <Image
+                      src={producto.imagen}
+                      alt={producto.nombre}
+                      width={300}
+                      height={220}
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        objectFit: "contain",
+                        display: "block",
+                      }}
+                    />
+                  </div>
+
+                  <div className="premium-product-card-content">
+                    <h3 className="premium-product-card-title">{producto.nombre}</h3>
+
+                    <p className="premium-product-card-hook">
+                      {getProductHook(producto)}
+                    </p>
+
+                    {producto.codigoOEM && (
+                      <p className="premium-product-card-meta">
+                        <strong>Código OEM:</strong> {producto.codigoOEM}
+                      </p>
+                    )}
+
+                    {producto.mostrarMensajeWhatsApp !== false && (
+                      <p className="premium-product-card-whatsapp">
+                        Ver compatibilidad y cotizar
+                      </p>
+                    )}
+
+                    {typeof producto.stockDisponible === "boolean" && (
+                      <div className="premium-stock-badge">
+                        <span
+                          className={producto.stockDisponible ? "in-stock" : "out-stock"}
+                        >
+                          {producto.stockDisponible
+                            ? "Stock disponible"
+                            : "Sin stock"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {resultado.totalPages > 1 && (
+            <div className="premium-pagination">
+              <Link
+                href={buildMarcaHref(
+                  marcaDecodificada,
+                  sistemaActivo,
+                  Math.max(1, resultado.page - 1)
+                )}
+                className={`premium-button-blue ${resultado.page === 1 ? "disabled" : ""}`}
+                aria-disabled={resultado.page === 1}
+              >
+                ← Anterior
+              </Link>
+
+              <span className="premium-muted">
+                Página {resultado.page} de {resultado.totalPages}
+              </span>
+
+              <Link
+                href={buildMarcaHref(
+                  marcaDecodificada,
+                  sistemaActivo,
+                  Math.min(resultado.totalPages, resultado.page + 1)
+                )}
+                className={`premium-button-blue ${
+                  resultado.page === resultado.totalPages ? "disabled" : ""
+                }`}
+                aria-disabled={resultado.page === resultado.totalPages}
+              >
+                Siguiente →
+              </Link>
+            </div>
+          )}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

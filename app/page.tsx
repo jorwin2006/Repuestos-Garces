@@ -17,39 +17,29 @@ export default function Home() {
   ];
 
   return (
-    <div
-    style={{
-      minHeight: "100vh",
-      backgroundImage:
-        "linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), url('/hero/home-premium.png')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-    }}
-    >
+    <div className="home-page">
       <div className="home-intro">
-        <h1 className="title">Repuestos Garces</h1>
-        <p className="subtitle">
+        <h1 className="home-title">Repuestos Garces</h1>
+        <p className="home-subtitle">
           Selecciona tu marca para ver los repuestos organizados por categorías.
         </p>
       </div>
 
-      <div className="grid">
+      <div className="home-grid">
         {marcas.map((marca) => (
-          <Link key={marca.name} href={`/marca/${marca.name}`} className="card">
-            <div className="card-image">
+          <Link key={marca.name} href={`/marca/${marca.name}`} className="home-card">
+            <div className="home-card-image">
               <Image
                 src={marca.logo}
                 alt={`Logo ${marca.name}`}
                 width={240}
                 height={130}
-                className="brand-logo"
+                className="home-brand-logo"
                 sizes="(max-width: 768px) 80vw, 240px"
                 priority
               />
             </div>
-
-            <span className="card-name">{marca.name}</span>
+            <span className="home-card-name">{marca.name}</span>
           </Link>
         ))}
       </div>
