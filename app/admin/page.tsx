@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import ProductForm from "./ProductForm";
 import type { Product, ProductInput } from "../../lib/products";
+import type { SessionUser } from "../../lib/admin-types";
 
 type SortOption =
   | "updated-desc"
@@ -12,11 +13,32 @@ type SortOption =
   | "brand-asc"
   | "brand-desc";
 
+type ProductActivityItem = {
+  id: string;
+  productId: string;
+  userId: string;
+  username: string;
+  action: "EDITAR";
+  createdAt: string;
+};
+
+type DeletedProductItem = {
+  id: string;
+  oldProductId: string;
+  productName: string;
+  userId: string;
+  username: string;
+  createdAt: string;
+};
+
 export default function AdminPage() {
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
@@ -25,49 +47,147 @@ export default function AdminPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
-    const savedPassword = window.sessionStorage.getItem("rg_admin_password");
+  const [activityProduct, setActivityProduct] = useState<Product | null>(null);
+  const [activityRows, setActivityRows] = useState<ProductActivityItem[]>([]);
+  const [loadingActivity, setLoadingActivity] = useState(false);
 
-    if (savedPassword) {
-      setPasswordInput(savedPassword);
-      setAdminPassword(savedPassword);
-    }
+  const [showDeletedProductsModal, setShowDeletedProductsModal] =
+    useState(false);
+  const [deletedProductRows, setDeletedProductRows] = useState<
+    DeletedProductItem[]
+  >([]);
+  const [loadingDeletedProducts, setLoadingDeletedProducts] = useState(false);
+
+  useEffect(() => {
+    void restoreSession();
   }, []);
 
-  useEffect(() => {
-    if (adminPassword) {
-      void loadProducts(adminPassword);
-    }
-  }, [adminPassword]);
-
-  async function loadProducts(password: string) {
+  async function restoreSession() {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/products", {
+      const response = await fetch("/api/admin/me");
+      if (!response.ok) {
+        setUser(null);
+        setProducts([]);
+        return;
+      }
+
+      const data = await response.json();
+      setUser(data.user ?? null);
+
+      await loadProducts();
+    } catch (sessionError) {
+      setUser(null);
+      setProducts([]);
+      setError(
+        sessionError instanceof Error
+          ? sessionError.message
+          : "No se pudo restaurar la sesión."
+      );
+    } finally {
+      setLoading(false);
+      setSessionChecked(true);
+    }
+  }
+
+  async function loadProducts() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch("/api/products");
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setUser(null);
+          setProducts([]);
+          setError("Tu sesión expiró. Inicia sesión nuevamente.");
+          return;
+        }
+
+        throw new Error(data.error || "No se pudieron cargar los productos.");
+      }
+
+      setProducts(data.products ?? []);
+    } catch (loadError) {
+      setProducts([]);
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Error al cargar productos."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLogin() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
         headers: {
-          "x-admin-password": password,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          username: usernameInput,
+          password: passwordInput,
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "No se pudieron cargar los productos.");
+        throw new Error(data.error || "No se pudo iniciar sesión.");
       }
 
-      setProducts(data.products ?? []);
-      setAdminPassword(password);
-      window.sessionStorage.setItem("rg_admin_password", password);
-    } catch (loadError) {
+      setUser(data.user ?? null);
+      setPasswordInput("");
+      await loadProducts();
+    } catch (loginError) {
+      setUser(null);
       setProducts([]);
-      window.sessionStorage.removeItem("rg_admin_password");
-      setAdminPassword("");
       setError(
-        loadError instanceof Error
-          ? loadError.message
-          : "Error al cargar productos."
+        loginError instanceof Error
+          ? loginError.message
+          : "Error al iniciar sesión."
+      );
+    } finally {
+      setLoading(false);
+      setSessionChecked(true);
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await fetch("/api/admin/logout", {
+        method: "POST",
+      });
+
+      setUser(null);
+      setProducts([]);
+      setUsernameInput("");
+      setPasswordInput("");
+      setSearch("");
+      setIsFormOpen(false);
+      setEditingProduct(null);
+      setActivityProduct(null);
+      setActivityRows([]);
+      setShowDeletedProductsModal(false);
+      setDeletedProductRows([]);
+    } catch (logoutError) {
+      setError(
+        logoutError instanceof Error
+          ? logoutError.message
+          : "No se pudo cerrar sesión."
       );
     } finally {
       setLoading(false);
@@ -81,7 +201,6 @@ export default function AdminPage() {
       method: isEditing ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-admin-password": adminPassword,
       },
       body: JSON.stringify(payload),
     });
@@ -94,7 +213,11 @@ export default function AdminPage() {
 
     setIsFormOpen(false);
     setEditingProduct(null);
-    await loadProducts(adminPassword);
+    await loadProducts();
+
+    if (activityProduct?.id === data.product?.id) {
+      await openActivity(data.product);
+    }
   }
 
   async function handleDelete(id: string) {
@@ -106,9 +229,6 @@ export default function AdminPage() {
 
     const response = await fetch(`/api/products?id=${id}`, {
       method: "DELETE",
-      headers: {
-        "x-admin-password": adminPassword,
-      },
     });
 
     const data = await response.json();
@@ -118,7 +238,16 @@ export default function AdminPage() {
       return;
     }
 
-    await loadProducts(adminPassword);
+    if (activityProduct?.id === id) {
+      setActivityProduct(null);
+      setActivityRows([]);
+    }
+
+    await loadProducts();
+
+    if (showDeletedProductsModal) {
+      await openDeletedProductsModal();
+    }
   }
 
   function openCreateForm() {
@@ -131,11 +260,68 @@ export default function AdminPage() {
     setIsFormOpen(true);
   }
 
-  function handleLogout() {
-    setProducts([]);
-    setAdminPassword("");
-    setPasswordInput("");
-    window.sessionStorage.removeItem("rg_admin_password");
+  async function openActivity(product: Product) {
+    try {
+      setLoadingActivity(true);
+      setError(null);
+
+      const response = await fetch(`/api/products/${product.id}/activity`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "No se pudo cargar la actividad del producto."
+        );
+      }
+
+      setActivityProduct(product);
+      setActivityRows(data.activity ?? []);
+    } catch (activityError) {
+      setError(
+        activityError instanceof Error
+          ? activityError.message
+          : "No se pudo cargar la actividad."
+      );
+    } finally {
+      setLoadingActivity(false);
+    }
+  }
+
+  function closeActivityModal() {
+    setActivityProduct(null);
+    setActivityRows([]);
+  }
+
+  async function openDeletedProductsModal() {
+    try {
+      setLoadingDeletedProducts(true);
+      setError(null);
+
+      const response = await fetch("/api/admin/deleted-products");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "No se pudo cargar el historial de eliminaciones."
+        );
+      }
+
+      setDeletedProductRows(data.deletedProducts ?? []);
+      setShowDeletedProductsModal(true);
+    } catch (deletedError) {
+      setError(
+        deletedError instanceof Error
+          ? deletedError.message
+          : "No se pudo cargar el historial de eliminaciones."
+      );
+    } finally {
+      setLoadingDeletedProducts(false);
+    }
+  }
+
+  function closeDeletedProductsModal() {
+    setShowDeletedProductsModal(false);
+    setDeletedProductRows([]);
   }
 
   const filteredProducts = useMemo(() => {
@@ -190,29 +376,52 @@ export default function AdminPage() {
     return sorted;
   }, [products, search, sortBy]);
 
-  if (!adminPassword) {
+  if (!sessionChecked) {
     return (
       <div className="container admin-page">
         <div className="admin-login-card">
-          <h1 className="title">Panel del encargado</h1>
+          <h1 className="title">Administrador de repuestos</h1>
+          <p className="subtitle">Verificando sesión...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="container admin-page">
+        <div className="admin-login-card">
+          <h1 className="title">Administrador de repuestos</h1>
           <p className="subtitle">
-            Ingresa la clave de administración para cargar y editar repuestos.
+            Inicia sesión con tu usuario y contraseña.
           </p>
 
           <div className="admin-login-form">
             <input
+              type="text"
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              placeholder="Usuario"
+              className="search-input"
+              autoComplete="username"
+            />
+
+            <input
               type="password"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              placeholder="Clave de administración"
+              placeholder="Contraseña"
               className="search-input"
+              autoComplete="current-password"
             />
 
             <button
               type="button"
               className="admin-primary-btn"
-              onClick={() => loadProducts(passwordInput)}
-              disabled={!passwordInput.trim() || loading}
+              onClick={handleLogin}
+              disabled={
+                !usernameInput.trim() || !passwordInput.trim() || loading
+              }
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>
@@ -230,7 +439,7 @@ export default function AdminPage() {
         <div>
           <h1 className="title">Administrador de repuestos</h1>
           <p className="subtitle">
-            Aquí puedes crear, editar y eliminar productos sin tocar el código.
+            Sesión iniciada como <strong>{user.username}</strong> ({user.role})
           </p>
         </div>
 
@@ -241,6 +450,14 @@ export default function AdminPage() {
             onClick={handleLogout}
           >
             Salir
+          </button>
+
+          <button
+            type="button"
+            className="admin-secondary-btn"
+            onClick={openDeletedProductsModal}
+          >
+            Repuestos Eliminados
           </button>
 
           <button
@@ -361,6 +578,14 @@ export default function AdminPage() {
                 <button
                   type="button"
                   className="admin-secondary-btn"
+                  onClick={() => openActivity(product)}
+                >
+                  Ver Actividad
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-secondary-btn"
                   onClick={() => openEditForm(product)}
                 >
                   Editar
@@ -386,13 +611,284 @@ export default function AdminPage() {
       {isFormOpen ? (
         <ProductForm
           initialProduct={editingProduct}
-          adminPassword={adminPassword}
           onCancel={() => {
             setIsFormOpen(false);
             setEditingProduct(null);
           }}
           onSave={handleSave}
         />
+      ) : null}
+
+      {activityProduct ? (
+        <div className="admin-modal-backdrop">
+          <div className="admin-modal">
+            <div className="admin-modal-header">
+              <div>
+                <h2>Actividad del repuesto</h2>
+                <p>
+                  <strong>{activityProduct.nombre}</strong>
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="admin-close-btn"
+                onClick={closeActivityModal}
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
+            </div>
+
+            {loadingActivity ? (
+              <p>Cargando actividad...</p>
+            ) : activityRows.length === 0 ? (
+              <p>Este repuesto todavía no tiene actividad registrada.</p>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table
+                  style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <thead>
+                    <tr>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Usuario
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Acción
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Fecha
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Hora
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activityRows.map((row) => {
+                      const date = new Date(row.createdAt);
+
+                      return (
+                        <tr key={row.id}>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {row.username}
+                          </td>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {row.action}
+                          </td>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {date.toLocaleDateString("es-EC")}
+                          </td>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {date.toLocaleTimeString("es-EC", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="admin-actions-row" style={{ marginTop: "1rem" }}>
+              <button
+                type="button"
+                className="admin-secondary-btn"
+                onClick={closeActivityModal}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {showDeletedProductsModal ? (
+        <div className="admin-modal-backdrop">
+          <div className="admin-modal">
+            <div className="admin-modal-header">
+              <div>
+                <h2>Repuestos Eliminados</h2>
+                <p>Historial general de eliminaciones registradas.</p>
+              </div>
+
+              <button
+                type="button"
+                className="admin-close-btn"
+                onClick={closeDeletedProductsModal}
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
+            </div>
+
+            {loadingDeletedProducts ? (
+              <p>Cargando historial...</p>
+            ) : deletedProductRows.length === 0 ? (
+              <p>No hay repuestos eliminados registrados todavía.</p>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table
+                  style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <thead>
+                    <tr>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Usuario
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Repuesto eliminado
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Fecha
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: "0.75rem",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        Hora
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {deletedProductRows.map((row) => {
+                      const date = new Date(row.createdAt);
+
+                      return (
+                        <tr key={row.id}>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {row.username}
+                          </td>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {row.productName}
+                          </td>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {date.toLocaleDateString("es-EC")}
+                          </td>
+                          <td
+                            style={{
+                              padding: "0.75rem",
+                              borderBottom: "1px solid #eee",
+                            }}
+                          >
+                            {date.toLocaleTimeString("es-EC", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="admin-actions-row" style={{ marginTop: "1rem" }}>
+              <button
+                type="button"
+                className="admin-secondary-btn"
+                onClick={closeDeletedProductsModal}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
       ) : null}
     </div>
   );

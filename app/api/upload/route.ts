@@ -1,5 +1,6 @@
 import { put } from "@vercel/blob";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { requirePermission } from "../../../lib/admin-auth";
 
 function sanitizeFileName(fileName: string) {
   const name = fileName
@@ -13,29 +14,30 @@ function sanitizeFileName(fileName: string) {
   return name || `imagen-${Date.now()}.png`;
 }
 
-function isAuthorized(request: NextRequest) {
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  const provided = request.headers.get("x-admin-password");
+function authErrorResponse(error: unknown) {
+  if (error instanceof Error) {
+    if (error.message === "UNAUTHORIZED") {
+      return NextResponse.json(
+        { error: "No autenticado." },
+        { status: 401 }
+      );
+    }
 
-  if (!adminPassword) {
-    return { ok: false, reason: "Falta configurar ADMIN_PASSWORD." };
+    if (error.message === "FORBIDDEN") {
+      return NextResponse.json(
+        { error: "No tienes permisos para subir imágenes." },
+        { status: 403 }
+      );
+    }
   }
 
-  if (provided !== adminPassword) {
-    return { ok: false, reason: "Clave de administrador incorrecta." };
-  }
-
-  return { ok: true, reason: null };
+  return null;
 }
 
-export async function POST(request: NextRequest) {
-  const auth = isAuthorized(request);
-
-  if (!auth.ok) {
-    return NextResponse.json({ error: auth.reason }, { status: 401 });
-  }
-
+export async function POST(request: Request) {
   try {
+    await requirePermission("canUploadImage");
+
     const formData = await request.formData();
     const image = formData.get("image");
 
@@ -66,6 +68,9 @@ export async function POST(request: NextRequest) {
       pathname: blob.pathname,
     });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
+
     console.error("Error subiendo imagen a Blob:", error);
 
     return NextResponse.json(

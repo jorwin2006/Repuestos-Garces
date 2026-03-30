@@ -11,7 +11,6 @@ import type { ProductInput, Product } from "../../lib/products";
 
 type Props = {
   initialProduct?: Product | null;
-  adminPassword: string;
   onCancel: () => void;
   onSave: (payload: ProductInput) => Promise<void>;
 };
@@ -24,7 +23,6 @@ function toTextareaValue(values?: string[]) {
 
 export default function ProductForm({
   initialProduct,
-  adminPassword,
   onCancel,
   onSave,
 }: Props) {
@@ -94,9 +92,6 @@ export default function ProductForm({
 
       const response = await fetch("/api/upload", {
         method: "POST",
-        headers: {
-          "x-admin-password": adminPassword,
-        },
         body: formData,
       });
 
