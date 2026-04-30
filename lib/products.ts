@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { sql } from "./db";
+import { supabaseFetch } from "./products-db";
 import {
   DEFAULT_DELIVERY_INFO,
   DEFAULT_PHONE,
@@ -76,6 +76,10 @@ function slugify(value: string): string {
     .replace(/-{2,}/g, "-");
 }
 
+function escapeLike(value: string) {
+  return value.replace(/[%*]/g, "");
+}
+
 function mapRowToProduct(row: ProductRow): Product {
   return {
     id: row.id,
@@ -99,34 +103,62 @@ function mapRowToProduct(row: ProductRow): Product {
   };
 }
 
+function mapProductToRow(product: Product): ProductRow {
+  const now = new Date().toISOString();
+
+  return {
+    id: product.id,
+    slug: product.slug,
+    nombre: product.nombre,
+    marca_vehiculo: product.marcaVehiculo,
+    categoria: product.categoria,
+    imagen: product.imagen,
+    codigo_oem: product.codigoOEM ?? null,
+    stock_disponible:
+      typeof product.stockDisponible === "boolean"
+        ? product.stockDisponible
+        : null,
+    compatibilidad: product.compatibilidad ?? [],
+    mostrar_info_publica: product.mostrarInfoPublica ?? true,
+    mostrar_mensaje_whatsapp: product.mostrarMensajeWhatsApp ?? true,
+    telefono_whatsapp: product.telefonoWhatsApp ?? DEFAULT_PHONE,
+    telefono_alterno: product.telefonoAlterno ?? null,
+    medidas: product.medidas ?? null,
+    descripcion: product.descripcion ?? null,
+    envios: product.envios ?? DEFAULT_DELIVERY_INFO,
+    created_at: product.createdAt ?? now,
+    updated_at: product.updatedAt ?? now,
+  };
+}
+
 async function findById(id: string): Promise<Product | undefined> {
-  const rows = (await sql`
-    SELECT *
-    FROM products
-    WHERE id = ${id}
-    LIMIT 1
-  `) as ProductRow[];
+  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
+    params: {
+      select: "*",
+      id: `eq.${id}`,
+      limit: "1",
+    },
+  });
 
   return rows[0] ? mapRowToProduct(rows[0]) : undefined;
 }
 
 async function slugExists(slug: string, currentId?: string) {
+  const params: Record<string, string> = {
+    select: "id",
+    slug: `eq.${slug}`,
+    limit: "1",
+  };
+
   if (currentId) {
-    const rows = await sql`
-      SELECT id
-      FROM products
-      WHERE slug = ${slug} AND id <> ${currentId}
-      LIMIT 1
-    `;
-    return rows.length > 0;
+    params.id = `neq.${currentId}`;
   }
 
-  const rows = await sql`
-    SELECT id
-    FROM products
-    WHERE slug = ${slug}
-    LIMIT 1
-  `;
+  const { data: rows } = await supabaseFetch<Pick<ProductRow, "id">[]>(
+    "products",
+    { params }
+  );
+
   return rows.length > 0;
 }
 
@@ -143,23 +175,15 @@ async function buildUniqueSlug(baseSlug: string, currentId?: string) {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const rows = (await sql`
-    SELECT *
-    FROM products
-    ORDER BY nombre ASC
-  `) as ProductRow[];
+  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
+    params: {
+      select: "*",
+      order: "nombre.asc",
+    },
+  });
 
   return rows.map(mapRowToProduct);
 }
-
-// ========== NEW FUNCTIONS ADDED HERE ==========
-type CategoryRow = {
-  categoria: string;
-};
-
-type CountRow = {
-  total: number;
-};
 
 type PaginatedProductsResult = {
   items: Product[];
@@ -182,15 +206,21 @@ function normalizePageSize(pageSize?: number) {
 export async function getBrandCategories(
   marcaVehiculo: string
 ): Promise<string[]> {
-  const rows = (await sql`
-    SELECT DISTINCT categoria
-    FROM products
-    WHERE mostrar_info_publica = true
-      AND LOWER(marca_vehiculo) = LOWER(${marcaVehiculo})
-    ORDER BY categoria ASC
-  `) as CategoryRow[];
+  const { data: rows } = await supabaseFetch<Pick<ProductRow, "categoria">[]>(
+    "products",
+    {
+      params: {
+        select: "categoria",
+        mostrar_info_publica: "eq.true",
+        marca_vehiculo: `ilike.${escapeLike(marcaVehiculo)}`,
+        order: "categoria.asc",
+      },
+    }
+  );
 
-  return rows.map((row) => row.categoria);
+  return Array.from(new Set(rows.map((row) => row.categoria))).sort((a, b) =>
+    a.localeCompare(b)
+  );
 }
 
 export async function getPublicProductsByBrand(params: {
@@ -203,44 +233,28 @@ export async function getPublicProductsByBrand(params: {
   const pageSize = normalizePageSize(params.pageSize);
   const offset = (page - 1) * pageSize;
 
-  const countRows = params.categoria
-    ? ((await sql`
-        SELECT COUNT(*)::int AS total
-        FROM products
-        WHERE mostrar_info_publica = true
-          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
-          AND categoria = ${params.categoria}
-      `) as CountRow[])
-    : ((await sql`
-        SELECT COUNT(*)::int AS total
-        FROM products
-        WHERE mostrar_info_publica = true
-          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
-      `) as CountRow[]);
+  const queryParams: Record<string, string> = {
+    select: "*",
+    mostrar_info_publica: "eq.true",
+    marca_vehiculo: `ilike.${escapeLike(params.marcaVehiculo)}`,
+    order: "nombre.asc",
+  };
 
-  const total = countRows[0]?.total ?? 0;
+  if (params.categoria) {
+    queryParams.categoria = `eq.${params.categoria}`;
+  }
+
+  const { data: rows, count } = await supabaseFetch<ProductRow[]>("products", {
+    params: queryParams,
+    range: {
+      from: offset,
+      to: offset + pageSize - 1,
+    },
+    prefer: "count=exact",
+  });
+
+  const total = count ?? rows.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-
-  const rows = params.categoria
-    ? ((await sql`
-        SELECT *
-        FROM products
-        WHERE mostrar_info_publica = true
-          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
-          AND categoria = ${params.categoria}
-        ORDER BY nombre ASC
-        LIMIT ${pageSize}
-        OFFSET ${offset}
-      `) as ProductRow[])
-    : ((await sql`
-        SELECT *
-        FROM products
-        WHERE mostrar_info_publica = true
-          AND LOWER(marca_vehiculo) = LOWER(${params.marcaVehiculo})
-        ORDER BY nombre ASC
-        LIMIT ${pageSize}
-        OFFSET ${offset}
-      `) as ProductRow[]);
 
   return {
     items: rows.map(mapRowToProduct),
@@ -271,61 +285,41 @@ export async function searchPublicProducts(params: {
     };
   }
 
-  const like = `%${query}%`;
+  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
+    params: {
+      select: "*",
+      mostrar_info_publica: "eq.true",
+      order: "nombre.asc",
+    },
+  });
 
-  const countRows = (await sql`
-    SELECT COUNT(*)::int AS total
-    FROM products
-    WHERE mostrar_info_publica = true
-      AND (
-        nombre ILIKE ${like}
-        OR codigo_oem ILIKE ${like}
-        OR marca_vehiculo ILIKE ${like}
-        OR categoria ILIKE ${like}
-        OR descripcion ILIKE ${like}
-        OR medidas ILIKE ${like}
-        OR EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements_text(COALESCE(compatibilidad, '[]'::jsonb)) AS item
-          WHERE item ILIKE ${like}
-        )
-      )
-  `) as CountRow[];
+  const needle = query.toLowerCase();
 
-  const total = countRows[0]?.total ?? 0;
+  const filtered = rows.filter((row) => {
+    const fields = [
+      row.nombre,
+      row.codigo_oem,
+      row.marca_vehiculo,
+      row.categoria,
+      row.descripcion,
+      row.medidas,
+      ...(row.compatibilidad ?? []),
+    ];
+
+    return fields.some((field) => field?.toLowerCase().includes(needle));
+  });
+
+  const total = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  const rows = (await sql`
-    SELECT *
-    FROM products
-    WHERE mostrar_info_publica = true
-      AND (
-        nombre ILIKE ${like}
-        OR codigo_oem ILIKE ${like}
-        OR marca_vehiculo ILIKE ${like}
-        OR categoria ILIKE ${like}
-        OR descripcion ILIKE ${like}
-        OR medidas ILIKE ${like}
-        OR EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements_text(COALESCE(compatibilidad, '[]'::jsonb)) AS item
-          WHERE item ILIKE ${like}
-        )
-      )
-    ORDER BY nombre ASC
-    LIMIT ${pageSize}
-    OFFSET ${offset}
-  `) as ProductRow[];
-
   return {
-    items: rows.map(mapRowToProduct),
+    items: filtered.slice(offset, offset + pageSize).map(mapRowToProduct),
     total,
     page,
     pageSize,
     totalPages,
   };
 }
-// ========== END OF NEW FUNCTIONS ==========
 
 export async function upsertProduct(input: ProductInput): Promise<Product> {
   const now = new Date().toISOString();
@@ -378,79 +372,27 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
     updatedAt: now,
   };
 
-  await sql`
-    INSERT INTO products (
-      id,
-      slug,
-      nombre,
-      marca_vehiculo,
-      categoria,
-      imagen,
-      codigo_oem,
-      stock_disponible,
-      compatibilidad,
-      mostrar_info_publica,
-      mostrar_mensaje_whatsapp,
-      telefono_whatsapp,
-      telefono_alterno,
-      medidas,
-      descripcion,
-      envios,
-      created_at,
-      updated_at
-    )
-    VALUES (
-      ${normalizedProduct.id},
-      ${normalizedProduct.slug},
-      ${normalizedProduct.nombre},
-      ${normalizedProduct.marcaVehiculo},
-      ${normalizedProduct.categoria},
-      ${normalizedProduct.imagen},
-      ${normalizedProduct.codigoOEM ?? null},
-      ${typeof normalizedProduct.stockDisponible === "boolean"
-        ? normalizedProduct.stockDisponible
-        : null},
-      ${JSON.stringify(normalizedProduct.compatibilidad ?? [])}::jsonb,
-      ${normalizedProduct.mostrarInfoPublica ?? true},
-      ${normalizedProduct.mostrarMensajeWhatsApp ?? true},
-      ${normalizedProduct.telefonoWhatsApp ?? DEFAULT_PHONE},
-      ${normalizedProduct.telefonoAlterno ?? null},
-      ${normalizedProduct.medidas ?? null},
-      ${normalizedProduct.descripcion ?? null},
-      ${JSON.stringify(
-        normalizedProduct.envios ?? DEFAULT_DELIVERY_INFO
-      )}::jsonb,
-      ${normalizedProduct.createdAt},
-      ${normalizedProduct.updatedAt}
-    )
-    ON CONFLICT (id)
-    DO UPDATE SET
-      slug = EXCLUDED.slug,
-      nombre = EXCLUDED.nombre,
-      marca_vehiculo = EXCLUDED.marca_vehiculo,
-      categoria = EXCLUDED.categoria,
-      imagen = EXCLUDED.imagen,
-      codigo_oem = EXCLUDED.codigo_oem,
-      stock_disponible = EXCLUDED.stock_disponible,
-      compatibilidad = EXCLUDED.compatibilidad,
-      mostrar_info_publica = EXCLUDED.mostrar_info_publica,
-      mostrar_mensaje_whatsapp = EXCLUDED.mostrar_mensaje_whatsapp,
-      telefono_whatsapp = EXCLUDED.telefono_whatsapp,
-      telefono_alterno = EXCLUDED.telefono_alterno,
-      medidas = EXCLUDED.medidas,
-      descripcion = EXCLUDED.descripcion,
-      envios = EXCLUDED.envios,
-      updated_at = EXCLUDED.updated_at
-  `;
+  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
+    method: "POST",
+    params: {
+      on_conflict: "id",
+      select: "*",
+    },
+    body: [mapProductToRow(normalizedProduct)],
+    prefer: "resolution=merge-duplicates,return=representation",
+  });
 
-  return normalizedProduct;
+  return rows[0] ? mapRowToProduct(rows[0]) : normalizedProduct;
 }
 
 export async function removeProduct(id: string) {
-  await sql`
-    DELETE FROM products
-    WHERE id = ${id}
-  `;
+  await supabaseFetch<null>("products", {
+    method: "DELETE",
+    params: {
+      id: `eq.${id}`,
+    },
+    prefer: "return=minimal",
+  });
 }
 
 export function sanitizePhoneNumber(phone?: string | null) {

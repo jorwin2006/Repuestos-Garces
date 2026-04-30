@@ -1,0 +1,459 @@
+[
+  {
+    "id": "2",
+    "slug": "balancin-motor",
+    "nombre": "Balancin Motor",
+    "marca_vehiculo": "HINO",
+    "categoria": "Motor",
+    "imagen": "/products/HINO/MOTOR/balancin_motor.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Hino J05C",
+      "Hino J08CT"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Repuestos Garces - Santo Domingo, Av. Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE.",
+      "deliveryLocal": "Coordinado por WhatsApp.",
+      "enviosNacionales": "Por encomienda en buses interprovinciales; el cliente debe retirar en el terminal designado de su ciudad."
+    },
+    "created_at": "2026-03-20T00:00:00.000Z",
+    "updated_at": "2026-03-23T17:19:10.708Z"
+  },
+  {
+    "id": "1",
+    "slug": "hidrovac-freno",
+    "nombre": "Hidrovac Freno",
+    "marca_vehiculo": "HINO",
+    "categoria": "Frenos",
+    "imagen": "/products/HINO/FRENOS/Hidrovac Freno.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "HINO"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Repuestos Garces - Santo Domingo, Av. Esmeraldas Lote 6 y Río Yuturi, frente a Erco TIRE.",
+      "deliveryLocal": "Coordinado por WhatsApp.",
+      "enviosNacionales": "Por encomienda en buses interprovinciales; el cliente debe retirar en el terminal designado de su ciudad."
+    },
+    "created_at": "2026-03-20T00:00:00.000Z",
+    "updated_at": "2026-03-30T21:55:27.384Z"
+  },
+  {
+    "id": "5ac977b9-ad49-489a-bfe9-63bdb7987f74",
+    "slug": "cable-acelerador",
+    "nombre": "Cable Acelerador",
+    "marca_vehiculo": "Isuzu",
+    "categoria": "Admisión",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776350651104-53981-lCkHpUbCZEN8KFGl5Xbgu7wv2cm5GN.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "ISUZU FSR",
+      "ISUZU FTR",
+      "ISUZU FVR"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Componente metálico diseñado para camiones Isuzu,",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-16T14:44:15.029Z",
+    "updated_at": "2026-04-16T15:21:31.750Z"
+  },
+  {
+    "id": "766fbd00-0505-4fc0-b1de-d21dd371f341",
+    "slug": "kit-secador-aire",
+    "nombre": "Kit Secador Aire",
+    "marca_vehiculo": "Mercedes-Benz",
+    "categoria": "Frenos",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776352569588-53987-eUGxio0O4qoBzhjBL6BE3k7wcXs746.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "1721",
+      "1620",
+      "OF 1721",
+      "OF 1620",
+      "O500",
+      "ACTROS",
+      "AXOR",
+      "ATEGO"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Diseñado para el mantenimiento y reparación de la válvula de aire en vehículo de carga pesada y autobuses",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-16T15:16:13.849Z",
+    "updated_at": "2026-04-16T15:16:13.849Z"
+  },
+  {
+    "id": "1d4631ee-244f-4da2-9dd0-45061b696c92",
+    "slug": "cojinete-bancada",
+    "nombre": "Cojinete Bancada",
+    "marca_vehiculo": "Volkswagen",
+    "categoria": "Motor",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776354999023-54035-ycdylH0oXDjoF3X7cMVKigj3PR7A5B.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Volkswagen   17210",
+      "Volkswagen   15180",
+      "Volkswagen   9150"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Son las piezas semicirculares que sostienen el cigüeñal dentro del bloque del motor, permitiendo que este gire con mínima fricción",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-16T15:41:14.024Z",
+    "updated_at": "2026-04-16T15:56:45.019Z"
+  },
+  {
+    "id": "283e67f8-3654-423a-aae3-7c99defe1d97",
+    "slug": "retenedor-rueda-post",
+    "nombre": "Retenedor Rueda Post",
+    "marca_vehiculo": "Volkswagen",
+    "categoria": "Ejes",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776354424091-54034-Z0Nk6vGZkFnXRmo9ctUr6gnd5X67jl.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Volkswagen 17210",
+      "Volkswagen 17220",
+      "Ford Cargo   1721",
+      "Mercedes Benz 1728",
+      "Ford 9000"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Evita que el lubricante (grasa o aceite) de la maza de la rueda se escape",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-16T15:54:29.198Z",
+    "updated_at": "2026-04-16T15:54:29.198Z"
+  },
+  {
+    "id": "b7fed884-cae5-46fe-88b7-4f32128c6c4f",
+    "slug": "valvula-apagado-motor",
+    "nombre": "Válvula Apagado Motor",
+    "marca_vehiculo": "Volkswagen",
+    "categoria": "Eléctrico",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776356044712-54047-bjYjPM8EADaSBtypnI61Fxs3fPTyVz.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Volkswagen 17210"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-16T16:14:10.536Z",
+    "updated_at": "2026-04-16T16:14:10.536Z"
+  },
+  {
+    "id": "2be43548-07ef-4072-b047-7cc9bd0c3217",
+    "slug": "trompo-retro",
+    "nombre": "Trompo Retro",
+    "marca_vehiculo": "Volkswagen",
+    "categoria": "Eléctrico",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776361110110-54051-NkMacmMR186no8Ki5CIscGaYwSjsJy.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Volkswagen 17210"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales"
+    },
+    "created_at": "2026-04-16T17:38:35.310Z",
+    "updated_at": "2026-04-16T17:38:35.310Z"
+  },
+  {
+    "id": "dd7210ec-77a2-4f1e-b0ca-7af408495dee",
+    "slug": "kit-filtro-secador",
+    "nombre": "Kit Filtro Secador",
+    "marca_vehiculo": "Nissan",
+    "categoria": "Aire",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1776437782937-54375-VEmOjgiKNzOBg0P1lR3KwsE0kfv07c.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Nissan UD CWB520",
+      "Nissan UD CWB455",
+      "Nissan UD CK450",
+      "Nissan UD CKB452",
+      "Nissan UD CKB270",
+      "Nissan UD CGB450"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Purifica el aire comprimido, eliminando la humedad e impurezas para proteger las válvulas y evitar la corrosión",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-17T14:56:27.456Z",
+    "updated_at": "2026-04-17T14:56:27.456Z"
+  },
+  {
+    "id": "81b2e46d-cff2-43af-b0e0-cda001811eb1",
+    "slug": "retenedor-rueda-post-2",
+    "nombre": "Retenedor Rueda Post",
+    "marca_vehiculo": "Yutong",
+    "categoria": "Ejes",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777388274139-retenedor-rueda-post-sqgTA4qm0kpmtCwPAZOXgJCJ3qHWKM.png",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Volkswagen 17210",
+      "Volkswagen 17220",
+      "Ford  Cargo 1721",
+      "Ford 9000",
+      "Mercedes Benz 1728"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Este retenedor también es compatible para Volkswagen, Ford y Mercedes Benz",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar vía WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T14:58:39.006Z",
+    "updated_at": "2026-04-28T14:58:39.006Z"
+  },
+  {
+    "id": "06d55e9d-d442-43bf-9ab3-95f0b37e666e",
+    "slug": "mango-palanca-de-cambios",
+    "nombre": "Mango Palanca de Cambios",
+    "marca_vehiculo": "Hino",
+    "categoria": "Transmisión",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777390096656-mango-palanca-cambios-v7nxIgkdalNt1DuB08fTbV7AexLejv.jpeg",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Hino GH",
+      "Hino FM"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar vía WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T15:30:48.503Z",
+    "updated_at": "2026-04-28T15:30:48.503Z"
+  },
+  {
+    "id": "cea89970-e5a2-4d28-ae2e-7f1a9ae38317",
+    "slug": "retenedor-rueda-del",
+    "nombre": "RETENEDOR RUEDA DEL",
+    "marca_vehiculo": "Mercedes-Benz",
+    "categoria": "Rodamiento",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777395869589-retenedor-rueda-del.-5171-100-x-130-x-13-01974-uXjGy6QRo6PvdFmwk5VfMXFHEz783i.jpeg",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Mercedes Benz 2632",
+      "Mercedes Benz 2638",
+      "Yutong 1730"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": "100.00 X 130.00 X 13.00",
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T17:08:02.197Z",
+    "updated_at": "2026-04-28T17:08:02.197Z"
+  },
+  {
+    "id": "7a7f8ef5-2642-4912-84ce-6f9880da9a72",
+    "slug": "vincha-base-ruliman-embrague",
+    "nombre": "VINCHA BASE RULIMAN EMBRAGUE",
+    "marca_vehiculo": "HINO",
+    "categoria": "Transmisión",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777396887930-vincha-base-ruliman-embrague-roe003-31234-1070-pSiKkRgrzQgGyvUqb2JCRCWjDpD1mP.jpeg",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "HINO FG",
+      "HINO AK"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": null,
+    "descripcion": "Vincha Rulimán Embrague para la marca Hino\nPara el sistema de Transmisión",
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar vía WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T17:26:43.605Z",
+    "updated_at": "2026-04-28T17:26:43.605Z"
+  },
+  {
+    "id": "265d17f4-66e5-44c5-b4d0-3b3499b39acf",
+    "slug": "retenedor-rueda-del-2",
+    "nombre": "RETENEDOR RUEDA DEL",
+    "marca_vehiculo": "Yutong",
+    "categoria": "Rodamiento",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777397483531-retenedor-rueda-del.-5171-100-x-130-x-13-01974-SDtRPx1AVFlsFBGypLLn0XK3IF3MuA.jpeg",
+    "codigo_oem": null,
+    "stock_disponible": true,
+    "compatibilidad": [
+      "Mercedes Benz 2632",
+      "Mercedes Benz 2638",
+      "Yutong 1730"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": "100.00 X 130.00 X 13.00",
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar via WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T17:31:41.679Z",
+    "updated_at": "2026-04-28T17:31:41.679Z"
+  },
+  {
+    "id": "d9cef4d7-286b-4e7e-9688-28c3541daa0a",
+    "slug": "retenedor-rueda-post-int",
+    "nombre": "RETENEDOR RUEDA POST. INT",
+    "marca_vehiculo": "NISSAN",
+    "categoria": "Rodamiento",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777399200169-retenedor-rueda-post.-int.-h3058-9828-01193-154-x-175-x-13-Kl7HfMlclm2wagmvfTJQOREzAmmyxz.jpeg",
+    "codigo_oem": "H3058 9828-01193",
+    "stock_disponible": true,
+    "compatibilidad": [
+      "NISSAN CW459",
+      "HINO FG",
+      "HINO GH",
+      "HINO FM1",
+      "HINO AK",
+      "HINO FS"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": "154 x 175 x 13",
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar vía WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T18:00:08.361Z",
+    "updated_at": "2026-04-28T18:00:08.361Z"
+  },
+  {
+    "id": "e691d8e1-d1d3-4d3f-aba0-f3efcab719a3",
+    "slug": "retenedor-rueda-post-int-2",
+    "nombre": "RETENEDOR RUEDA POST INT",
+    "marca_vehiculo": "HINO",
+    "categoria": "Rodamiento",
+    "imagen": "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/products/1777399329390-retenedor-rueda-post.-int.-h3058-9828-01193-154-x-175-x-13-lUOk0412hJ6kHNuBCvpkIUXRoEQt3G.jpeg",
+    "codigo_oem": "H3058 9828-01193",
+    "stock_disponible": true,
+    "compatibilidad": [
+      "HINO FG",
+      "HINO GH",
+      "HINO FM1",
+      "HINO AK",
+      "HINO FS",
+      "NISSAN CW459"
+    ],
+    "mostrar_info_publica": true,
+    "mostrar_mensaje_whatsapp": true,
+    "telefono_whatsapp": "593991657178",
+    "telefono_alterno": null,
+    "medidas": "154 x 175 x 13",
+    "descripcion": null,
+    "envios": {
+      "retiroLocal": "Entrega rápida",
+      "deliveryLocal": "Coordinar vía WhatsApp para el envío",
+      "enviosNacionales": "Por encomiendas en buses interprovinciales (En sus respectivos Terminales terrestres)"
+    },
+    "created_at": "2026-04-28T18:02:13.239Z",
+    "updated_at": "2026-04-28T18:02:13.239Z"
+  }
+]
