@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 export default function SiteChrome({
   children,
@@ -45,6 +46,9 @@ export default function SiteChrome({
               <Link href="/envios">Envíos</Link>
               <Link href="/contacto">Contacto</Link>
             </nav>
+
+            <ThemeToggle />
+            
           </div>
         </header>
       ) : null}

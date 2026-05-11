@@ -29,17 +29,17 @@ export default function NosotrosPage() {
                 <p className="premium-muted">
                   <strong>Repuestos Garcés</strong> nació en 2008 en Santo
                   Domingo de los Tsáchilas con un objetivo claro: ofrecer
-                  repuestos originales y alternativos de alta calidad para
-                  camiones y buses. Lo que comenzó como un pequeño negocio
+                  repuestos originales y alternos de alta calidad para
+                  buses y camiones. Comenzamos como un pequeño negocio
                   familiar hoy es un referente en la zona, gracias a la
                   confianza de cientos de transportistas que avalan nuestra
                   experiencia.
                 </p>
                 <p className="premium-muted">
                   Sabemos que en el transporte cada minuto cuenta, por eso nos
-                  especializamos en <strong>compatibilidad precisa</strong>. No
+                  especializamos en <strong>soluciones precisas</strong>. No
                   solo vendemos un repuesto; te asesoramos para que lleves la
-                  pieza correcta, evitando devoluciones y tiempos muertos.
+                  solución perfecta a tu necesidad.
                 </p>
               </article>
 
@@ -48,14 +48,14 @@ export default function NosotrosPage() {
                 <p className="premium-muted">
                   Creemos en el comercio honesto y en el acompañamiento al
                   cliente. Por eso, antes de cada compra te recomendamos
-                  verificar el código OEM y las especificaciones técnicas. Si no
-                  estamos seguros de la compatibilidad, lo decimos abiertamente
+                  verificar el código de la parte y las especificaciones técnicas. Si no
+                  estamos seguros de la solución, lo decimos abiertamente
                   y te sugerimos alternativas.
                 </p>
                 <p className="premium-muted">
                   Esta forma de trabajar nos ha permitido construir relaciones
                   duraderas con talleres mecánicos, flotas y propietarios
-                  independientes en todo Ecuador.
+                  de vehículos a nivel nacional.
                 </p>
               </article>
             </div>
@@ -69,7 +69,7 @@ export default function NosotrosPage() {
               </div>
 
               <div className="premium-card premium-about-stat">
-                <div className="premium-about-stat-number">+500</div>
+                <div className="premium-about-stat-number">+5000</div>
                 <div className="premium-about-stat-label">
                   clientes satisfechos
                 </div>
@@ -86,10 +86,9 @@ export default function NosotrosPage() {
             <article className="premium-card premium-about-card premium-about-cta-card">
               <h2 className="premium-about-subtitle">Compromiso con la calidad</h2>
               <p className="premium-muted">
-                Trabajamos con proveedores que cumplen normas internacionales.
-                Cada repuesto que ofrecemos pasa por un filtro de calidad, y en
-                caso de productos alternativos, indicamos claramente su origen
-                para que tomes la mejor decisión.
+                Trabajamos con proveedores serios y responsables a nivel nacional.
+                Cada repuesto te lo ofrecemos con garantía y respaldo del fabricante, y en
+                caso de productos alternativos, damos alternativas al mejor precio.
               </p>
 
               <div className="premium-about-cta">

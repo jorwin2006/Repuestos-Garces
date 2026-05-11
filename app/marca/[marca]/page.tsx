@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+
 import {
   getBrandCategories,
   getPublicProductsByBrand,
@@ -28,6 +29,7 @@ function buildMarcaHref(marca: string, sistema?: string | null, page = 1) {
   }
 
   const query = params.toString();
+
   return `/marca/${encodeURIComponent(marca)}${query ? `?${query}` : ""}`;
 }
 
@@ -68,165 +70,209 @@ export default async function MarcaPage({ params, searchParams }: Props) {
   });
 
   return (
-    <div className="premium-page">
-      <div
-        className="premium-content"
-        style={{ width: "100%", maxWidth: "none", padding: "0 1.5rem" }}
-      >
-        <div className="premium-hero premium-hero--expanded">
-          <div style={{ marginBottom: "1.5rem" }}>
-            <Link
-              href="/"
-              style={{ color: "#3b82f6", textDecoration: "none", fontWeight: 500 }}
-            >
-              ← Volver al inicio
-            </Link>
-          </div>
+    <div className="premium-page brand-collection-page">
+      <main className="brand-collection-shell">
+        <nav className="brand-breadcrumb">
+          <Link href="/">Inicio</Link>
+          <span>/</span>
+          <strong>{marcaDecodificada}</strong>
+        </nav>
 
-          <h1
-            className="premium-section-title"
-            style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}
-          >
-            Marca: {marcaDecodificada}
-          </h1>
+        <header className="brand-collection-header">
+          <div>
+            <p className="brand-eyebrow">Catálogo por marca</p>
 
-          <p className="brand-page-lead">
-            Repuestos {marcaDecodificada} seleccionados para sistemas clave.
-            Consulta compatibilidad y disponibilidad antes de cotizar.
-          </p>
+            <h1>{marcaDecodificada}</h1>
 
-          <div className="premium-filters">
-            <Link
-              href={buildMarcaHref(marcaDecodificada, null, 1)}
-              className={`premium-chip ${!sistemaActivo ? "active" : ""}`}
-            >
-              Todos
-            </Link>
-
-            {categorias.map((cat) => (
-              <Link
-                key={cat}
-                href={buildMarcaHref(marcaDecodificada, cat, 1)}
-                className={`premium-chip ${sistemaActivo === cat ? "active" : ""}`}
-              >
-                {cat}
-              </Link>
-            ))}
-          </div>
-
-          <div className="brand-trust-strip">
-            <span className="brand-trust-pill">Atención rápida</span>
-            <span className="brand-trust-pill">Envíos nacionales</span>
-            <span className="brand-trust-pill">Retiro en local</span>
-          </div>
-
-          <p
-            className="premium-muted"
-            style={{ margin: "1.2rem 0 1.1rem 0", fontSize: "0.9rem" }}
-          >
-            Mostrando {resultado.items.length} de {resultado.total} repuestos
-          </p>
-
-          {resultado.items.length === 0 ? (
-            <p className="premium-muted">
-              No hay productos
-              {sistemaActivo ? ` en la categoría "${sistemaActivo}"` : ""} para
-              esta marca.
+            <p>
+              Consulta repuestos disponibles por sistema. Filtra por categoría
+              para encontrar más rápido lo que necesitas.
             </p>
-          ) : (
-            <div className="premium-grid">
-              {resultado.items.map((producto) => (
+          </div>
+
+          <div className="brand-header-pills">
+            <span>Atención rápida</span>
+            <span>Envíos nacionales</span>
+            <span>Retiro en local</span>
+          </div>
+        </header>
+
+        <div className="brand-collection-layout">
+          <aside className="brand-sidebar">
+            <section className="brand-sidebar-card">
+              <div className="brand-sidebar-title">
+                <h2>Categorías</h2>
+                <span>{categorias.length}</span>
+              </div>
+
+              <div className="brand-category-list">
                 <Link
-                  key={producto.id}
-                  href={`/producto/${producto.slug}`}
-                  className="premium-card premium-product-card"
+                  href={buildMarcaHref(marcaDecodificada, null, 1)}
+                  className={`brand-category-link ${
+                    !sistemaActivo ? "active" : ""
+                  }`}
                 >
-                  <div className="premium-image-frame">
-                    <Image
-                      src={producto.imagen}
-                      alt={producto.nombre}
-                      width={300}
-                      height={220}
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                        objectFit: "contain",
-                        display: "block",
-                      }}
-                    />
-                  </div>
-
-                  <div className="premium-product-card-content">
-                    <h3 className="premium-product-card-title">{producto.nombre}</h3>
-
-                    <p className="premium-product-card-hook">
-                      {getProductHook(producto)}
-                    </p>
-
-                    {producto.codigoOEM && (
-                      <p className="premium-product-card-meta">
-                        <strong>Código OEM:</strong> {producto.codigoOEM}
-                      </p>
-                    )}
-
-                    {producto.mostrarMensajeWhatsApp !== false && (
-                      <p className="premium-product-card-whatsapp">
-                        Ver compatibilidad y cotizar
-                      </p>
-                    )}
-
-                    {typeof producto.stockDisponible === "boolean" && (
-                      <div className="premium-stock-badge">
-                        <span
-                          className={producto.stockDisponible ? "in-stock" : "out-stock"}
-                        >
-                          {producto.stockDisponible
-                            ? "Stock disponible"
-                            : "Sin stock"}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  <span>Todos los sistemas</span>
                 </Link>
-              ))}
+
+                {categorias.map((cat) => (
+                  <Link
+                    key={cat}
+                    href={buildMarcaHref(marcaDecodificada, cat, 1)}
+                    className={`brand-category-link ${
+                      sistemaActivo === cat ? "active" : ""
+                    }`}
+                  >
+                    <span>{cat}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            <section className="brand-sidebar-card brand-help-card">
+              <h3>¿No encuentras el repuesto?</h3>
+              <p>
+                Escríbenos con el modelo, año y código OEM para ayudarte a
+                validar compatibilidad.
+              </p>
+            </section>
+          </aside>
+
+          <section className="brand-products-panel">
+            <div className="brand-products-toolbar">
+              <div>
+                <h2>
+                  {sistemaActivo
+                    ? `${sistemaActivo} ${marcaDecodificada}`
+                    : `Repuestos ${marcaDecodificada}`}
+                </h2>
+
+                <p>
+                  Hay {resultado.total}{" "}
+                  {resultado.total === 1 ? "producto" : "productos"}
+                  {sistemaActivo ? ` en ${sistemaActivo}` : ""}
+                </p>
+              </div>
+
+              {sistemaActivo && (
+                <Link
+                  href={buildMarcaHref(marcaDecodificada, null, 1)}
+                  className="brand-clear-filter"
+                >
+                  Limpiar filtro
+                </Link>
+              )}
             </div>
-          )}
 
-          {resultado.totalPages > 1 && (
-            <div className="premium-pagination">
-              <Link
-                href={buildMarcaHref(
-                  marcaDecodificada,
-                  sistemaActivo,
-                  Math.max(1, resultado.page - 1)
-                )}
-                className={`premium-button-blue ${resultado.page === 1 ? "disabled" : ""}`}
-                aria-disabled={resultado.page === 1}
-              >
-                ← Anterior
-              </Link>
+            {resultado.items.length === 0 ? (
+              <div className="brand-empty-state">
+                <h3>No hay productos disponibles</h3>
+                <p>
+                  No se encontraron repuestos
+                  {sistemaActivo ? ` en ${sistemaActivo}` : ""} para esta marca.
+                </p>
+              </div>
+            ) : (
+              <div className="brand-products-grid">
+                {resultado.items.map((producto) => (
+                  <Link
+                    key={producto.id}
+                    href={`/producto/${producto.slug}`}
+                    className="premium-card premium-product-card"
+                  >
+                    <div className="premium-image-frame">
+                      <Image
+                        src={producto.imagen}
+                        alt={producto.nombre}
+                        width={300}
+                        height={220}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          objectFit: "contain",
+                          display: "block",
+                        }}
+                      />
+                    </div>
 
-              <span className="premium-muted">
-                Página {resultado.page} de {resultado.totalPages}
-              </span>
+                    <div className="premium-product-card-content">
+                      <h3 className="premium-product-card-title">
+                        {producto.nombre}
+                      </h3>
 
-              <Link
-                href={buildMarcaHref(
-                  marcaDecodificada,
-                  sistemaActivo,
-                  Math.min(resultado.totalPages, resultado.page + 1)
-                )}
-                className={`premium-button-blue ${
-                  resultado.page === resultado.totalPages ? "disabled" : ""
-                }`}
-                aria-disabled={resultado.page === resultado.totalPages}
-              >
-                Siguiente →
-              </Link>
-            </div>
-          )}
+                      <p className="premium-product-card-hook">
+                        {getProductHook(producto)}
+                      </p>
+
+                      {producto.codigoOEM && (
+                        <p className="premium-product-card-meta">
+                          <strong>Código OEM:</strong> {producto.codigoOEM}
+                        </p>
+                      )}
+
+                      {producto.mostrarMensajeWhatsApp !== false && (
+                        <p className="premium-product-card-whatsapp">
+                          Ver compatibilidad y cotizar
+                        </p>
+                      )}
+
+                      {typeof producto.stockDisponible === "boolean" && (
+                        <div className="premium-stock-badge">
+                          <span
+                            className={
+                              producto.stockDisponible ? "in-stock" : "out-stock"
+                            }
+                          >
+                            {producto.stockDisponible
+                              ? "Stock disponible"
+                              : "Sin stock"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {resultado.totalPages > 1 && (
+              <div className="premium-pagination">
+                <Link
+                  href={buildMarcaHref(
+                    marcaDecodificada,
+                    sistemaActivo,
+                    Math.max(1, resultado.page - 1)
+                  )}
+                  className={`premium-button-blue ${
+                    resultado.page === 1 ? "disabled" : ""
+                  }`}
+                  aria-disabled={resultado.page === 1}
+                >
+                  ← Anterior
+                </Link>
+
+                <span className="premium-muted">
+                  Página {resultado.page} de {resultado.totalPages}
+                </span>
+
+                <Link
+                  href={buildMarcaHref(
+                    marcaDecodificada,
+                    sistemaActivo,
+                    Math.min(resultado.totalPages, resultado.page + 1)
+                  )}
+                  className={`premium-button-blue ${
+                    resultado.page === resultado.totalPages ? "disabled" : ""
+                  }`}
+                  aria-disabled={resultado.page === resultado.totalPages}
+                >
+                  Siguiente →
+                </Link>
+              </div>
+            )}
+          </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

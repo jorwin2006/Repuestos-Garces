@@ -44,7 +44,7 @@ export default function EnviosPage() {
                         ERCO TIRE).
                       </li>
                       <li>
-                        Horario: Lunes a viernes 8:00–18:00, sábados 8:00–12:30.
+                        Horario: Lunes a viernes 8:00–18:00, sábados 8:00–13:30.
                       </li>
                       <li>
                         <strong>Ventaja:</strong> Entrega inmediata y sin costo.
