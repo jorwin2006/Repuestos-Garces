@@ -6349,3 +6349,250 @@ html[data-theme="dark"] .home-showcase-watermark {
 :is(html[data-theme="light"], html:not([data-theme="dark"])) .premium-product-shell .product-back-link:hover {
   text-decoration: underline !important;
 }
+
+/* =========================================================
+   CORRECCIÓN MODO CLARO: NOSOTROS / ENVÍOS / CONTACTO
+   ========================================================= */
+
+/* Fondo general en modo claro */
+html[data-theme="light"] .premium-page--about,
+html:not([data-theme="dark"]) .premium-page--about,
+html[data-theme="light"] .premium-page--shipping,
+html:not([data-theme="dark"]) .premium-page--shipping {
+  background:
+    radial-gradient(circle at top left, rgba(11, 94, 215, 0.08), transparent 32rem),
+    #f4f7fb !important;
+  color: #0f172a !important;
+}
+
+/* Quita velos oscuros innecesarios en modo claro */
+html[data-theme="light"] .premium-page--about::before,
+html:not([data-theme="dark"]) .premium-page--about::before,
+html[data-theme="light"] .premium-page--shipping::before,
+html:not([data-theme="dark"]) .premium-page--shipping::before,
+html[data-theme="light"] .premium-page--about::after,
+html:not([data-theme="dark"]) .premium-page--about::after,
+html[data-theme="light"] .premium-page--shipping::after,
+html:not([data-theme="dark"]) .premium-page--shipping::after {
+  opacity: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Contenedores principales */
+html[data-theme="light"] .premium-page--about .premium-hero,
+html:not([data-theme="dark"]) .premium-page--about .premium-hero,
+html[data-theme="light"] .premium-page--shipping .premium-hero,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-hero {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.09) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Tarjetas */
+html[data-theme="light"] .premium-page--about .premium-card,
+html:not([data-theme="dark"]) .premium-page--about .premium-card,
+html[data-theme="light"] .premium-page--shipping .premium-card,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Títulos y textos */
+html[data-theme="light"] .premium-page--about .premium-section-title,
+html:not([data-theme="dark"]) .premium-page--about .premium-section-title,
+html[data-theme="light"] .premium-page--shipping .premium-section-title,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-section-title,
+html[data-theme="light"] .premium-page--about .premium-about-subtitle,
+html:not([data-theme="dark"]) .premium-page--about .premium-about-subtitle,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-subtitle,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-subtitle {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .premium-page--about .premium-muted,
+html:not([data-theme="dark"]) .premium-page--about .premium-muted,
+html[data-theme="light"] .premium-page--shipping .premium-muted,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-muted,
+html[data-theme="light"] .premium-page--about .premium-about-lead,
+html:not([data-theme="dark"]) .premium-page--about .premium-about-lead,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-lead,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-lead,
+html[data-theme="light"] .premium-page--about .premium-about-stat-label,
+html:not([data-theme="dark"]) .premium-page--about .premium-about-stat-label {
+  color: #475569 !important;
+  text-shadow: none !important;
+}
+
+/* Etiquetas / chips */
+html[data-theme="light"] .premium-page--about .premium-about-pill,
+html:not([data-theme="dark"]) .premium-page--about .premium-about-pill,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-pill,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-pill {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(37, 99, 235, 0.18) !important;
+  box-shadow: none !important;
+}
+
+/* Bordes de CTA */
+html[data-theme="light"] .premium-page--about .premium-about-cta,
+html:not([data-theme="dark"]) .premium-page--about .premium-about-cta,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-cta,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-cta {
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Texto CTA en modo claro */
+html[data-theme="light"] .premium-page--about .premium-about-cta-text,
+html:not([data-theme="dark"]) .premium-page--about .premium-about-cta-text,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-cta-title,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-cta-title {
+  color: #0f172a !important;
+}
+
+/* Mantener legibles las tarjetas de Envíos que tienen imagen de fondo */
+html[data-theme="light"] .premium-page--shipping .premium-shipping-card-image,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-card-image {
+  background: transparent !important;
+}
+
+html[data-theme="light"] .premium-page--shipping .premium-shipping-card-image .premium-shipping-subtitle,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-card-image .premium-shipping-subtitle,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-card-image .premium-shipping-list,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-card-image .premium-shipping-list,
+html[data-theme="light"] .premium-page--shipping .premium-shipping-card-image .premium-shipping-list strong,
+html:not([data-theme="dark"]) .premium-page--shipping .premium-shipping-card-image .premium-shipping-list strong {
+  color: #ffffff !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* =========================================================
+   CONTACTO EN MODO CLARO
+   ========================================================= */
+
+html[data-theme="light"] .contact-page,
+html:not([data-theme="dark"]) .contact-page {
+  color: #0f172a !important;
+}
+
+/* La tarjeta superior de Contacto conserva imagen oscura, pero con texto claro */
+html[data-theme="light"] .contact-hero-copy,
+html:not([data-theme="dark"]) .contact-hero-copy {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(4, 12, 28, 0.82) 0%,
+      rgba(4, 12, 28, 0.58) 45%,
+      rgba(4, 12, 28, 0.36) 100%
+    ),
+    url("/contacto-premium-bg.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] .contact-hero-copy .contact-title,
+html:not([data-theme="dark"]) .contact-hero-copy .contact-title,
+html[data-theme="light"] .contact-hero-copy .contact-subtitle,
+html:not([data-theme="dark"]) .contact-hero-copy .contact-subtitle {
+  color: #f8fafc !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.42) !important;
+}
+
+html[data-theme="light"] .contact-hero-copy .contact-eyebrow,
+html:not([data-theme="dark"]) .contact-hero-copy .contact-eyebrow {
+  color: #ff3b5f !important;
+}
+
+/* Tarjetas claras de Contacto */
+html[data-theme="light"] .contact-highlight,
+html:not([data-theme="dark"]) .contact-highlight,
+html[data-theme="light"] .contact-card,
+html:not([data-theme="dark"]) .contact-card,
+html[data-theme="light"] .contact-location-card,
+html:not([data-theme="dark"]) .contact-location-card,
+html[data-theme="light"] .contact-bottom-cta,
+html:not([data-theme="dark"]) .contact-bottom-cta {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] .contact-highlight h2,
+html:not([data-theme="dark"]) .contact-highlight h2,
+html[data-theme="light"] .contact-card h2,
+html:not([data-theme="dark"]) .contact-card h2,
+html[data-theme="light"] .contact-location-card h2,
+html:not([data-theme="dark"]) .contact-location-card h2,
+html[data-theme="light"] .contact-bottom-cta h2,
+html:not([data-theme="dark"]) .contact-bottom-cta h2 {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .contact-highlight p,
+html:not([data-theme="dark"]) .contact-highlight p,
+html[data-theme="light"] .contact-card p,
+html:not([data-theme="dark"]) .contact-card p,
+html[data-theme="light"] .contact-location-card p,
+html:not([data-theme="dark"]) .contact-location-card p,
+html[data-theme="light"] .contact-bottom-cta p,
+html:not([data-theme="dark"]) .contact-bottom-cta p,
+html[data-theme="light"] .contact-detail-list li,
+html:not([data-theme="dark"]) .contact-detail-list li {
+  color: #475569 !important;
+  text-shadow: none !important;
+}
+
+/* Chips de la tarjeta de asesoría */
+html[data-theme="light"] .contact-pill-list span,
+html:not([data-theme="dark"]) .contact-pill-list span,
+html[data-theme="light"] .contact-badge,
+html:not([data-theme="dark"]) .contact-badge {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(37, 99, 235, 0.18) !important;
+}
+
+/* Tarjeta con video: mantenerla oscura y legible */
+html[data-theme="light"] .contact-card--schedule-video,
+html:not([data-theme="dark"]) .contact-card--schedule-video {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="light"] .contact-card--schedule-video h2,
+html:not([data-theme="dark"]) .contact-card--schedule-video h2,
+html[data-theme="light"] .contact-card--schedule-video strong,
+html:not([data-theme="dark"]) .contact-card--schedule-video strong,
+html[data-theme="light"] .contact-card--schedule-video p,
+html:not([data-theme="dark"]) .contact-card--schedule-video p,
+html[data-theme="light"] .contact-card--schedule-video li,
+html:not([data-theme="dark"]) .contact-card--schedule-video li {
+  color: #ffffff !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Botones secundarios en Contacto */
+html[data-theme="light"] .contact-secondary-btn--light,
+html:not([data-theme="dark"]) .contact-secondary-btn--light {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
+}
+
+html[data-theme="light"] .contact-text-link,
+html:not([data-theme="dark"]) .contact-text-link {
+  color: #1d4ed8 !important;
+}

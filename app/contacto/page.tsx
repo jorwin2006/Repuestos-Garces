@@ -120,7 +120,7 @@ export default function ContactoPage() {
         <span className="contact-icon">🛠️</span>
         <div>
           <strong>Sábados</strong>
-          <p>8:00 – 12:30</p>
+          <p>8:00 – 13:30</p>
         </div>
       </li>
 
