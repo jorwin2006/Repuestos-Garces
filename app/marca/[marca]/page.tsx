@@ -1,11 +1,13 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import AddToQuoteButton from "../../../components/quote-cart/AddToQuoteButton";
 import {
   getBrandCategories,
   getPublicProductsByBrand,
 } from "../../../lib/products";
+import cardStyles from "./CatalogCards.module.css";
 
 type Props = {
   params: Promise<{
@@ -20,46 +22,23 @@ type Props = {
 function buildMarcaHref(marca: string, sistema?: string | null, page = 1) {
   const params = new URLSearchParams();
 
-  if (sistema) {
-    params.set("sistema", sistema);
-  }
-
-  if (page > 1) {
-    params.set("page", String(page));
-  }
+  if (sistema) params.set("sistema", sistema);
+  if (page > 1) params.set("page", String(page));
 
   const query = params.toString();
-
   return `/marca/${encodeURIComponent(marca)}${query ? `?${query}` : ""}`;
-}
-
-function getProductHook(producto: {
-  codigoOEM?: string | null;
-  stockDisponible?: boolean | null;
-}) {
-  if (producto.codigoOEM) {
-    return `Consulta OEM ${producto.codigoOEM} y compatibilidad.`;
-  }
-
-  if (producto.stockDisponible === true) {
-    return "Disponible para consulta inmediata.";
-  }
-
-  return "Ver compatibilidad y detalles antes de cotizar.";
 }
 
 export default async function MarcaPage({ params, searchParams }: Props) {
   const { marca } = await params;
   const { sistema, page } = await searchParams;
-
   const marcaDecodificada = decodeURIComponent(marca);
   const categorias = await getBrandCategories(marcaDecodificada);
 
-  if (categorias.length === 0) {
-    notFound();
-  }
+  if (categorias.length === 0) notFound();
 
-  const sistemaActivo = sistema && categorias.includes(sistema) ? sistema : null;
+  const sistemaActivo =
+    sistema && categorias.includes(sistema) ? sistema : null;
   const paginaActual = Math.max(1, Number(page) || 1);
 
   const resultado = await getPublicProductsByBrand({
@@ -81,9 +60,7 @@ export default async function MarcaPage({ params, searchParams }: Props) {
         <header className="brand-collection-header">
           <div>
             <p className="brand-eyebrow">Catálogo por marca</p>
-
             <h1>{marcaDecodificada}</h1>
-
             <p>
               Consulta repuestos disponibles por sistema. Filtra por categoría
               para encontrar más rápido lo que necesitas.
@@ -115,15 +92,15 @@ export default async function MarcaPage({ params, searchParams }: Props) {
                   <span>Todos los sistemas</span>
                 </Link>
 
-                {categorias.map((cat) => (
+                {categorias.map((categoria) => (
                   <Link
-                    key={cat}
-                    href={buildMarcaHref(marcaDecodificada, cat, 1)}
+                    key={categoria}
+                    href={buildMarcaHref(marcaDecodificada, categoria, 1)}
                     className={`brand-category-link ${
-                      sistemaActivo === cat ? "active" : ""
+                      sistemaActivo === categoria ? "active" : ""
                     }`}
                   >
-                    <span>{cat}</span>
+                    <span>{categoria}</span>
                   </Link>
                 ))}
               </div>
@@ -146,7 +123,6 @@ export default async function MarcaPage({ params, searchParams }: Props) {
                     ? `${sistemaActivo} ${marcaDecodificada}`
                     : `Repuestos ${marcaDecodificada}`}
                 </h2>
-
                 <p>
                   Hay {resultado.total}{" "}
                   {resultado.total === 1 ? "producto" : "productos"}
@@ -154,14 +130,14 @@ export default async function MarcaPage({ params, searchParams }: Props) {
                 </p>
               </div>
 
-              {sistemaActivo && (
+              {sistemaActivo ? (
                 <Link
                   href={buildMarcaHref(marcaDecodificada, null, 1)}
                   className="brand-clear-filter"
                 >
                   Limpiar filtro
                 </Link>
-              )}
+              ) : null}
             </div>
 
             {resultado.items.length === 0 ? (
@@ -174,68 +150,67 @@ export default async function MarcaPage({ params, searchParams }: Props) {
               </div>
             ) : (
               <div className="brand-products-grid">
-                {resultado.items.map((producto) => (
-                  <Link
-                    key={producto.id}
-                    href={`/producto/${producto.slug}`}
-                    className="premium-card premium-product-card"
-                  >
-                    <div className="premium-image-frame">
-                      <Image
-                        src={producto.imagen}
-                        alt={producto.nombre}
-                        width={300}
-                        height={220}
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          objectFit: "contain",
-                          display: "block",
-                        }}
-                      />
-                    </div>
+                {resultado.items.map((producto) => {
+                  const vehiculosCompatibles =
+                    producto.compatibilidad?.filter(Boolean).join(" / ") ||
+                    producto.marcaVehiculo ||
+                    marcaDecodificada;
 
-                    <div className="premium-product-card-content">
-                      <h3 className="premium-product-card-title">
-                        {producto.nombre}
-                      </h3>
+                  const quoteItem = {
+                    id: String(producto.id),
+                    slug: producto.slug,
+                    nombre: producto.nombre,
+                    marcaVehiculo: producto.marcaVehiculo,
+                    categoria: producto.categoria,
+                    imagen: producto.imagen,
+                    compatibilidad: producto.compatibilidad,
+                    telefonoWhatsApp: producto.telefonoWhatsApp,
+                  };
 
-                      <p className="premium-product-card-hook">
-                        {getProductHook(producto)}
-                      </p>
-
-                      {producto.codigoOEM && (
-                        <p className="premium-product-card-meta">
-                          <strong>Código OEM:</strong> {producto.codigoOEM}
-                        </p>
-                      )}
-
-                      {producto.mostrarMensajeWhatsApp !== false && (
-                        <p className="premium-product-card-whatsapp">
-                          Ver compatibilidad y cotizar
-                        </p>
-                      )}
-
-                      {typeof producto.stockDisponible === "boolean" && (
-                        <div className="premium-stock-badge">
-                          <span
-                            className={
-                              producto.stockDisponible ? "in-stock" : "out-stock"
-                            }
-                          >
-                            {producto.stockDisponible
-                              ? "Stock disponible"
-                              : "Sin stock"}
-                          </span>
+                  return (
+                    <article key={producto.id} className={cardStyles.card}>
+                      <Link
+                        href={`/producto/${producto.slug}`}
+                        className={cardStyles.cardLink}
+                        aria-label={`Ver información de ${producto.nombre}`}
+                      >
+                        <div className={cardStyles.header}>
+                          <div className={cardStyles.logo}>
+                            <Image
+                              src="/products/Logo_Repuestos.png"
+                              alt="Logo de Repuestos Garcés"
+                              width={54}
+                              height={54}
+                            />
+                          </div>
+                          <h3>{producto.nombre}</h3>
                         </div>
-                      )}
-                    </div>
-                  </Link>
-                ))}
+
+                        <div className={cardStyles.image}>
+                          <Image
+                            src={producto.imagen}
+                            alt={producto.nombre}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1180px) 50vw, 33vw"
+                          />
+                        </div>
+
+                        <div className={cardStyles.compatibility}>
+                          <span>Aplica para</span>
+                          <strong>{vehiculosCompatibles}</strong>
+                        </div>
+                      </Link>
+
+                      <div className={cardStyles.save}>
+                        <AddToQuoteButton item={quoteItem} variant="icon" />
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
 
-            {resultado.totalPages > 1 && (
+            {resultado.totalPages > 1 ? (
               <div className="premium-pagination">
                 <Link
                   href={buildMarcaHref(
@@ -247,6 +222,7 @@ export default async function MarcaPage({ params, searchParams }: Props) {
                     resultado.page === 1 ? "disabled" : ""
                   }`}
                   aria-disabled={resultado.page === 1}
+                  tabIndex={resultado.page === 1 ? -1 : undefined}
                 >
                   ← Anterior
                 </Link>
@@ -265,11 +241,14 @@ export default async function MarcaPage({ params, searchParams }: Props) {
                     resultado.page === resultado.totalPages ? "disabled" : ""
                   }`}
                   aria-disabled={resultado.page === resultado.totalPages}
+                  tabIndex={
+                    resultado.page === resultado.totalPages ? -1 : undefined
+                  }
                 >
                   Siguiente →
                 </Link>
               </div>
-            )}
+            ) : null}
           </section>
         </div>
       </main>

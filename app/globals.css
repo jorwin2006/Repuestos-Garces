@@ -6596,3 +6596,201 @@ html[data-theme="light"] .contact-text-link,
 html:not([data-theme="dark"]) .contact-text-link {
   color: #1d4ed8 !important;
 }
+
+/* =========================================
+   IMÁGENES UNIFORMES EN EL CATÁLOGO POR MARCA
+   ========================================= */
+
+.brand-products-grid {
+  align-items: stretch;
+}
+
+/* Todas las tarjetas de una fila tendrán la misma altura */
+.brand-products-grid .premium-product-card {
+  height: 100%;
+}
+
+/* Todas las imágenes tendrán un recuadro 4:3 */
+.brand-products-grid .premium-image-frame {
+  aspect-ratio: 4 / 3;
+  margin: 0.75rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #ffffff !important;
+}
+
+/* La imagen se adapta sin deformarse ni cortarse */
+.brand-products-grid .premium-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Mantiene ordenado el contenido de las tarjetas */
+.brand-products-grid .premium-product-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+/* =========================================
+   TARJETAS TIPO CATÁLOGO DE REPUESTOS
+   ========================================= */
+
+.brand-products-grid {
+  align-items: stretch;
+  gap: 1.5rem;
+}
+
+.catalog-product-card {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 92px auto 82px;
+  overflow: hidden;
+  color: #111827;
+  text-decoration: none;
+  background: #ffffff;
+  border: 1px solid #b8bec7;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.catalog-product-card:hover {
+  transform: translateY(-4px);
+  border-color: #2563eb;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.16);
+}
+
+/* Encabezado: logo a la izquierda y nombre a la derecha */
+
+.catalog-product-header {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  background: #ffffff;
+  border-bottom: 1px solid #b8bec7;
+}
+
+.catalog-product-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem;
+  border-right: 1px solid #b8bec7;
+}
+
+.catalog-product-logo img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.catalog-product-header h3 {
+  min-width: 0;
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #111827;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+/* Área uniforme para todas las imágenes */
+
+.catalog-product-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #ffffff;
+  border-bottom: 1px solid #b8bec7;
+}
+
+.catalog-product-photo {
+  object-fit: contain;
+  padding: 1.2rem;
+}
+
+/* Franja inferior: vehículos compatibles */
+
+.catalog-product-compatibility {
+  min-width: 0;
+  padding: 0.55rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  text-align: center;
+}
+
+.catalog-product-compatibility span {
+  margin-bottom: 0.2rem;
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.catalog-product-compatibility strong {
+  width: 100%;
+  color: #111827;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-transform: uppercase;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Mantener las tarjetas blancas en modo oscuro */
+
+html[data-theme="dark"] .catalog-product-card,
+html[data-theme="dark"] .catalog-product-header,
+html[data-theme="dark"] .catalog-product-image,
+html[data-theme="dark"] .catalog-product-compatibility {
+  background: #ffffff;
+}
+
+html[data-theme="dark"] .catalog-product-header h3,
+html[data-theme="dark"] .catalog-product-compatibility strong {
+  color: #111827;
+}
+
+html[data-theme="dark"] .catalog-product-compatibility span {
+  color: #64748b;
+}
+
+@media (max-width: 640px) {
+  .catalog-product-card {
+    grid-template-rows: 84px auto 78px;
+  }
+
+  .catalog-product-header {
+    grid-template-columns: 66px minmax(0, 1fr);
+  }
+
+  .catalog-product-logo img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .catalog-product-photo {
+    padding: 1rem;
+  }
+}
