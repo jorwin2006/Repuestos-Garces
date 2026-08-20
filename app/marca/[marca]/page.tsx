@@ -196,8 +196,9 @@ export default async function MarcaPage({ params, searchParams }: Props) {
                         </div>
 
                         <div className={cardStyles.compatibility}>
-                          <span>Aplica para</span>
-                          <strong>{vehiculosCompatibles}</strong>
+                          <span className={cardStyles.compatibilityText}>
+                           {vehiculosCompatibles}
+                          </span>
                         </div>
                       </Link>
 
