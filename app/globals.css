@@ -6794,3 +6794,166 @@ html[data-theme="dark"] .catalog-product-compatibility span {
     padding: 1rem;
   }
 }
+/* =========================================
+   HOME SHOWCASE - AJUSTE FINAL COMPACTO
+   ========================================= */
+
+.home-showcase-banner {
+  height: auto;
+  min-height: 0;
+}
+
+/* Columna izquierda */
+.home-showcase-copy {
+  padding: 26px 2.4rem 28px;
+  justify-content: flex-start;
+}
+
+/* Logo RG + etiqueta */
+.home-showcase-brand {
+  margin-bottom: 28px;
+}
+
+/* ELIMINA el espacio fijo de 210px */
+.home-showcase-title-area {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible;
+  margin: 0;
+}
+
+/* Título */
+.home-showcase-title {
+  margin: 0 !important;
+  line-height: 1;
+}
+
+.home-showcase-title-prefix {
+  line-height: 0.98 !important;
+}
+
+.home-showcase-brand-name {
+  margin-top: 6px !important;
+  line-height: 0.92 !important;
+}
+
+/* Descripción */
+.home-showcase-fixed-text {
+  max-width: 520px;
+  margin: 26px 0 0 !important;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+/* Botones principales */
+.home-showcase-actions {
+  margin-top: 20px;
+  gap: 0.7rem;
+}
+
+/* Un poco más refinados */
+.home-showcase-primary,
+.home-showcase-secondary {
+  min-height: 44px;
+  padding: 0.72rem 1.15rem;
+}
+
+/* Selector de marcas */
+.home-showcase-brand-selector {
+  margin-top: 16px;
+  gap: 0.48rem;
+}
+
+/* Botones secundarios más compactos */
+.home-showcase-brand-option {
+  min-height: 38px;
+  padding: 0.32rem 0.65rem;
+  font-size: 0.7rem;
+}
+
+/* Logos del selector */
+.home-showcase-brand-option-logo {
+  width: 32px;
+  height: 21px;
+}
+
+/* Parte visual */
+.home-showcase-visual {
+  min-height: 0;
+}
+
+/* Marca de agua más discreta */
+.home-showcase-watermark {
+  right: 3rem !important;
+  top: 1.8rem !important;
+  font-size: clamp(2.2rem, 5vw, 4.2rem) !important;
+  color: rgba(15, 23, 42, 0.055) !important;
+}
+
+/* Tablet */
+@media (max-width: 980px) {
+  .home-showcase-copy {
+    padding: 22px 1.4rem;
+  }
+
+  .home-showcase-brand {
+    margin-bottom: 22px;
+  }
+
+  .home-showcase-fixed-text {
+    margin-top: 20px !important;
+  }
+
+  .home-showcase-actions {
+    margin-top: 16px;
+  }
+
+  .home-showcase-brand-selector {
+    margin-top: 14px;
+  }
+
+  .home-showcase-visual {
+    min-height: 300px;
+  }
+}
+
+/* Móvil */
+@media (max-width: 640px) {
+  .home-showcase-copy {
+    padding: 18px 1rem;
+  }
+
+  .home-showcase-brand {
+    margin-bottom: 18px;
+  }
+
+  .home-showcase-fixed-text {
+    margin-top: 18px !important;
+    font-size: 0.95rem;
+  }
+
+  .home-showcase-actions {
+    margin-top: 15px;
+  }
+
+  .home-showcase-brand-selector {
+    margin-top: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-showcase-brand-option {
+    min-height: 38px;
+  }
+
+  .home-showcase-visual {
+    min-height: 245px;
+  }
+
+  .home-showcase-watermark {
+    right: 1rem !important;
+    top: 1rem !important;
+    font-size: 2.5rem !important;
+  }
+}
