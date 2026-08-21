@@ -86,19 +86,34 @@ function getProductHref(product: ShowcaseProduct, brand: string) {
 }
 
 function getVisibleProducts(products: ShowcaseProduct[], offset: number) {
-  if (products.length <= VISIBLE_PRODUCTS) {
-    return products;
+  // Evita mostrar dos productos que usen exactamente la misma imagen
+  const uniqueProducts = Array.from(
+    new Map(products.map((product) => [product.imagen, product])).values()
+  );
+
+  // Si solamente existen 1, 2 o 3 imágenes, muestra las disponibles
+  if (uniqueProducts.length <= VISIBLE_PRODUCTS) {
+    return uniqueProducts;
   }
 
-  if (products.length === 4) {
-    return [products[0], products[1], products[2 + (offset % 2)]];
+  // Generador pseudoaleatorio estable basado en el offset
+  function seededRandom(seed: number) {
+    const value = Math.sin(seed) * 10000;
+    return value - Math.floor(value);
   }
 
-  return [
-    products[offset % products.length],
-    products[(offset + 1) % products.length],
-    products[(offset + 2) % products.length],
-  ];
+  // Mezclamos los productos sin modificar el arreglo original
+  const shuffled = [...uniqueProducts];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const seed = offset * 100 + i + 1;
+    const j = Math.floor(seededRandom(seed) * (i + 1));
+
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  // Mostramos máximo 3 productos diferentes
+  return shuffled.slice(0, VISIBLE_PRODUCTS);
 }
 
 function buildSlides(products: ShowcaseProduct[]): ShowcaseSlide[] {
