@@ -169,7 +169,6 @@ export default function HomeShowcaseBanner({ products }: Props) {
   );
 
   const activeSlide = slides[activeIndex] ?? slides[0];
-  const activeBrandLogo = getBrandLogo(activeSlide.marca);
   const currentProductOffset = productOffsets[activeSlide.marca] ?? 0;
   const isLongBrand = activeSlide.marca === "MERCEDES-BENZ";
 
@@ -238,17 +237,6 @@ export default function HomeShowcaseBanner({ products }: Props) {
         </div>
 
         <div className="home-showcase-title-area">
-          <div className="home-showcase-active-brand">
-            <Image
-              src={activeBrandLogo}
-              alt={`Logo ${activeSlide.marca}`}
-              width={90}
-              height={54}
-              className="home-showcase-active-brand-logo"
-            />
-
-            <span>{activeSlide.marca}</span>
-          </div>
 
           <h1 className="home-showcase-title">
             <span className="home-showcase-title-prefix">
