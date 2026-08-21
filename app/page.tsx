@@ -10,12 +10,30 @@ export const metadata: Metadata = {
 };
 
 const marcas = [
-  { name: "HINO", logo: "/products/HINO/Hino2.png" },
-  { name: "ISUZU", logo: "/products/ISUZU/isuzu1.png" },
-  { name: "NISSAN", logo: "/products/NISSAN/nissan.png" },
-  { name: "MERCEDES-BENZ", logo: "/products/MERCEDES/mercedes-benz.png" },
-  { name: "VOLKSWAGEN", logo: "/products/VOLKSWAGEN/volkswagen1.png" },
-  { name: "YUTONG", logo: "/products/YUTONG/yutong1.png" },
+  {
+    name: "HINO",
+    logo: "/products/HINO/Hino2.png",
+  },
+  {
+    name: "ISUZU",
+    logo: "/products/ISUZU/isuzu1.png",
+  },
+  {
+    name: "NISSAN",
+    logo: "/products/NISSAN/nissan.png",
+  },
+  {
+    name: "MERCEDES-BENZ",
+    logo: "/products/MERCEDES/mercedes-benz.png",
+  },
+  {
+    name: "VOLKSWAGEN",
+    logo: "/products/VOLKSWAGEN/volkswagen1.png",
+  },
+  {
+    name: "YUTONG",
+    logo: "/products/YUTONG/yutong1.png",
+  },
 ];
 
 function normalizeBrand(value: string) {
@@ -29,7 +47,8 @@ export default async function Home() {
     .filter((producto) => producto.mostrarInfoPublica !== false)
     .filter(
       (producto) =>
-        producto.imagen && producto.imagen !== "/products/placeholder.svg"
+        producto.imagen &&
+        producto.imagen !== "/products/placeholder.svg"
     );
 
   const productosPublicos = marcas
@@ -55,15 +74,10 @@ export default async function Home() {
     <div className="home-page">
       <HomeShowcaseBanner products={productosPublicos} />
 
-      <section id="marcas" className="home-brands-section">
-        <div className="home-intro">
-          <h2 className="home-title">Repuestos Garces</h2>
-
-          <p className="home-subtitle">
-            Selecciona tu marca para ver los repuestos organizados por categorías.
-          </p>
-        </div>
-
+      <section
+        id="marcas"
+        className="home-brands-section"
+      >
         <div className="home-grid">
           {marcas.map((marca) => (
             <Link
@@ -83,7 +97,9 @@ export default async function Home() {
                 />
               </div>
 
-              <span className="home-card-name">{marca.name}</span>
+              <span className="home-card-name">
+                {marca.name}
+              </span>
             </Link>
           ))}
         </div>
