@@ -33,10 +33,12 @@ function buildDescription(producto: {
     parts.push(`Compatible con: ${producto.compatibilidad.join(", ")}`);
   }
 
-  if (producto.descripcion) parts.push(producto.descripcion);
+  if (producto.descripcion) {
+    parts.push(producto.descripcion);
+  }
+
   return parts.join(". ");
 }
-
 
 function WhatsAppIcon() {
   return (
@@ -65,11 +67,17 @@ function DeliveryIcon() {
   );
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
   const { slug } = await params;
+
   const products = await getProducts();
+
   const producto = products.find(
-    (item) => item.slug === slug && item.mostrarInfoPublica !== false
+    (item) =>
+      item.slug === slug &&
+      item.mostrarInfoPublica !== false
   );
 
   if (!producto) {
@@ -84,27 +92,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: producto.nombre,
     description,
+
     openGraph: {
       title: producto.nombre,
       description,
       url: `https://repuestosgarces.com/producto/${producto.slug}`,
-      images: [{ url: producto.imagen, width: 800, height: 600 }],
+      images: [
+        {
+          url: producto.imagen,
+          width: 800,
+          height: 600,
+        },
+      ],
     },
+
     twitter: {
       card: "summary_large_image",
       title: producto.nombre,
       description,
       images: [producto.imagen],
     },
-    alternates: { canonical: `/producto/${producto.slug}` },
+
+    alternates: {
+      canonical: `/producto/${producto.slug}`,
+    },
   };
 }
 
 export default async function ProductoPage({ params }: Props) {
   const { slug } = await params;
+
   const products = await getProducts();
+
   const producto = products.find(
-    (item) => item.slug === slug && item.mostrarInfoPublica !== false
+    (item) =>
+      item.slug === slug &&
+      item.mostrarInfoPublica !== false
   );
 
   if (!producto) {
@@ -112,19 +135,32 @@ export default async function ProductoPage({ params }: Props) {
       <main className={styles.page}>
         <section className={styles.notFound}>
           <h1>Producto no encontrado</h1>
-          <p>El repuesto que buscas no existe o todavía no está publicado.</p>
-          <Link href="/">Volver al catálogo</Link>
+
+          <p>
+            El repuesto que buscas no existe o todavía no está publicado.
+          </p>
+
+          <Link href="/">
+            Volver al catálogo
+          </Link>
         </section>
       </main>
     );
   }
 
   const compatibilidad = producto.compatibilidad ?? [];
+
   const compatibilidadTexto = compatibilidad.join(", ");
+
   const deliveryInfo = {
-    retiroLocal: producto.envios?.retiroLocal ?? DEFAULT_DELIVERY_INFO.retiroLocal,
+    retiroLocal:
+      producto.envios?.retiroLocal ??
+      DEFAULT_DELIVERY_INFO.retiroLocal,
+
     deliveryLocal:
-      producto.envios?.deliveryLocal ?? DEFAULT_DELIVERY_INFO.deliveryLocal,
+      producto.envios?.deliveryLocal ??
+      DEFAULT_DELIVERY_INFO.deliveryLocal,
+
     enviosNacionales:
       producto.envios?.enviosNacionales ??
       DEFAULT_DELIVERY_INFO.enviosNacionales,
@@ -135,8 +171,15 @@ export default async function ProductoPage({ params }: Props) {
     `Producto: ${producto.nombre}`,
     `Marca: ${producto.marcaVehiculo}`,
     `Categoría: ${producto.categoria}`,
-    producto.codigoOEM ? `Código OEM: ${producto.codigoOEM}` : undefined,
-    compatibilidadTexto ? `Aplica para: ${compatibilidadTexto}` : undefined,
+
+    producto.codigoOEM
+      ? `Código OEM: ${producto.codigoOEM}`
+      : undefined,
+
+    compatibilidadTexto
+      ? `Aplica para: ${compatibilidadTexto}`
+      : undefined,
+
     "¿Me pueden confirmar disponibilidad y precio?",
   ].filter(Boolean) as string[];
 
@@ -158,26 +201,38 @@ export default async function ProductoPage({ params }: Props) {
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
-        <nav className={styles.breadcrumb} aria-label="Navegación">
-          <Link href="/">Inicio</Link>
+
+        {/* Breadcrumb */}
+        <nav
+          className={styles.breadcrumb}
+          aria-label="Navegación"
+        >
+          <Link href="/">
+            Inicio
+          </Link>
+
           <span>/</span>
-          <Link href={`/marca/${encodeURIComponent(producto.marcaVehiculo)}`}>
+
+          <Link
+            href={`/marca/${encodeURIComponent(
+              producto.marcaVehiculo
+            )}`}
+          >
             {producto.marcaVehiculo}
           </Link>
+
           <span>/</span>
-          <span>{producto.nombre}</span>
+
+          <span>
+            {producto.nombre}
+          </span>
         </nav>
 
+        {/* Producto principal */}
         <section className={styles.hero}>
-          <div className={styles.galleryCard}>
-            <div className={styles.galleryTopbar}>
-              <div className={styles.galleryBrand}>
-                <span aria-hidden="true" />
-                <span>Repuestos Garcés · {producto.marcaVehiculo}</span>
-              </div>
-              <span className={styles.galleryHint}>Imagen referencial</span>
-            </div>
 
+          {/* Imagen */}
+          <div className={styles.galleryCard}>
             <div className={styles.imageStage}>
               <Image
                 src={producto.imagen}
@@ -189,11 +244,12 @@ export default async function ProductoPage({ params }: Props) {
             </div>
           </div>
 
+          {/* Información */}
           <div className={styles.infoCard}>
+
+            {/* Disponibilidad */}
             <div className={styles.eyebrowRow}>
-              <p className={styles.eyebrow}>
-                {producto.categoria} · {producto.marcaVehiculo}
-              </p>
+              <span aria-hidden="true" />
 
               {typeof producto.stockDisponible === "boolean" ? (
                 <span
@@ -203,139 +259,259 @@ export default async function ProductoPage({ params }: Props) {
                       : styles.stockUnavailable
                   }
                 >
-                  {producto.stockDisponible ? "Disponible" : "Consultar stock"}
+                  {producto.stockDisponible
+                    ? "Disponible"
+                    : "Consultar stock"}
                 </span>
               ) : (
-                <span className={styles.stockNeutral}>Consultar</span>
+                <span className={styles.stockNeutral}>
+                  Consultar
+                </span>
               )}
             </div>
 
-            <h1 className={styles.title}>{producto.nombre}</h1>
+            {/* Nombre */}
+            <h1 className={styles.title}>
+              {producto.nombre}
+            </h1>
+
+            {/* Compatibilidad */}
             {compatibilidad.length > 0 ? (
               <div className={styles.compatibilityPreview}>
-                {compatibilidad.slice(0, 4).map((item) => (
-                  <span key={item} className={styles.compatibilityChip}>
-                    {item}
-                  </span>
-                ))}
+                {compatibilidad
+                  .slice(0, 4)
+                  .map((item) => (
+                    <span
+                      key={item}
+                      className={
+                        styles.compatibilityChip
+                      }
+                    >
+                      {item}
+                    </span>
+                  ))}
+
                 {compatibilidad.length > 4 ? (
-                  <span className={styles.compatibilityChip}>
+                  <span
+                    className={
+                      styles.compatibilityChip
+                    }
+                  >
                     +{compatibilidad.length - 4} más
                   </span>
                 ) : null}
               </div>
             ) : null}
 
+            {/* Datos */}
             <div className={styles.facts}>
+
               <div className={styles.fact}>
-                <span>Marca</span>
-                <strong>{producto.marcaVehiculo}</strong>
+                <span>
+                  Marca
+                </span>
+
+                <strong>
+                  {producto.marcaVehiculo}
+                </strong>
               </div>
+
               <div className={styles.fact}>
-                <span>Sistema</span>
-                <strong>{producto.categoria}</strong>
+                <span>
+                  Sistema
+                </span>
+
+                <strong>
+                  {producto.categoria}
+                </strong>
               </div>
+
               {producto.codigoOEM ? (
                 <div className={styles.fact}>
-                  <span>Código OEM</span>
-                  <strong>{producto.codigoOEM}</strong>
+                  <span>
+                    Código OEM
+                  </span>
+
+                  <strong>
+                    {producto.codigoOEM}
+                  </strong>
                 </div>
               ) : null}
+
               {producto.medidas ? (
                 <div className={styles.fact}>
-                  <span>Medidas</span>
-                  <strong>{producto.medidas}</strong>
+                  <span>
+                    Medidas
+                  </span>
+
+                  <strong>
+                    {producto.medidas}
+                  </strong>
                 </div>
               ) : null}
+
             </div>
 
+            {/* Descripción */}
             {producto.descripcion ? (
               <div className={styles.description}>
-                <h2>Descripción</h2>
-                <p>{producto.descripcion}</p>
+                <h2>
+                  Descripción
+                </h2>
+
+                <p>
+                  {producto.descripcion}
+                </p>
               </div>
             ) : null}
 
+            {/* Acciones */}
             <div className={styles.actions}>
-              <AddToQuoteButton item={quoteItem} variant="full" />
+
+              <AddToQuoteButton
+                item={quoteItem}
+                variant="full"
+              />
 
               <a
                 href={whatsappURL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.whatsappButton}
+                className={
+                  styles.whatsappButton
+                }
               >
                 <WhatsAppIcon />
-                <span>Cotizar este repuesto</span>
+
+                <span>
+                  Cotizar este repuesto
+                </span>
               </a>
+
             </div>
 
             <p className={styles.helperText}>
-              Guarda varios repuestos y envía una sola consulta desde el botón
-              flotante «Cotización».
+              Guarda varios repuestos y envía una sola
+              consulta desde el botón flotante
+              «Cotización».
             </p>
+
           </div>
         </section>
 
+        {/* Información adicional */}
         <section className={styles.detailsGrid}>
+
+          {/* Compatibilidad */}
           <article className={styles.detailCard}>
+
             <div className={styles.detailHeader}>
+
               <span className={styles.detailIcon}>
                 <CompatibilityIcon />
               </span>
+
               <div>
-                <h2>Compatibilidad</h2>
-                <p>Vehículos y modelos registrados para este repuesto.</p>
+                <h2>
+                  Compatibilidad
+                </h2>
+
+                <p>
+                  Vehículos y modelos registrados para este
+                  repuesto.
+                </p>
               </div>
+
             </div>
 
             <div className={styles.compatibilityList}>
+
               {compatibilidad.length > 0 ? (
                 compatibilidad.map((item) => (
-                  <span key={item} className={styles.compatibilityItem}>
+                  <span
+                    key={item}
+                    className={
+                      styles.compatibilityItem
+                    }
+                  >
                     {item}
                   </span>
                 ))
               ) : (
-                <span className={styles.compatibilityItem}>
+                <span
+                  className={
+                    styles.compatibilityItem
+                  }
+                >
                   Confirma modelo y año por WhatsApp
                 </span>
               )}
+
             </div>
           </article>
 
+          {/* Envíos */}
           <article className={styles.detailCard}>
+
             <div className={styles.detailHeader}>
+
               <span className={styles.detailIcon}>
                 <DeliveryIcon />
               </span>
+
               <div>
-                <h2>Envíos y entregas</h2>
-                <p>Opciones disponibles para recibir tu pedido.</p>
+                <h2>
+                  Envíos y entregas
+                </h2>
+
+                <p>
+                  Opciones disponibles para recibir tu pedido.
+                </p>
               </div>
+
             </div>
 
             <div className={styles.deliveryList}>
+
               {deliveryInfo.retiroLocal ? (
                 <div className={styles.deliveryItem}>
-                  <strong>Retiro en local</strong>
-                  <p>{deliveryInfo.retiroLocal}</p>
+                  <strong>
+                    Retiro en local
+                  </strong>
+
+                  <p>
+                    {deliveryInfo.retiroLocal}
+                  </p>
                 </div>
               ) : null}
+
               {deliveryInfo.deliveryLocal ? (
                 <div className={styles.deliveryItem}>
-                  <strong>Entrega local</strong>
-                  <p>{deliveryInfo.deliveryLocal}</p>
+                  <strong>
+                    Entrega local
+                  </strong>
+
+                  <p>
+                    {deliveryInfo.deliveryLocal}
+                  </p>
                 </div>
               ) : null}
+
               {deliveryInfo.enviosNacionales ? (
                 <div className={styles.deliveryItem}>
-                  <strong>Envíos nacionales</strong>
-                  <p>{deliveryInfo.enviosNacionales}</p>
+                  <strong>
+                    Envíos nacionales
+                  </strong>
+
+                  <p>
+                    {deliveryInfo.enviosNacionales}
+                  </p>
                 </div>
               ) : null}
+
             </div>
           </article>
+
         </section>
       </div>
     </main>
