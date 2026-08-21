@@ -220,118 +220,103 @@ export default function HomeShowcaseBanner({ products }: Props) {
     return () => window.clearTimeout(timer);
   }, [activeIndex, timerKey, slides]);
 
-  return (
-    <section className="home-showcase-banner">
-      <div className="home-showcase-copy">
-        <div className="home-showcase-brand">
+return (
+  <section className="home-showcase-banner">
+    <div className="home-showcase-copy">
+
+      <div className="home-showcase-title-area">
+        <h1 className="home-showcase-title">
+          <span className="home-showcase-title-prefix">
+            Repuestos
+          </span>
+
+          <strong
+            className={`home-showcase-brand-name ${
+              isLongBrand ? "is-long-brand" : ""
+            }`}
+          >
+            {activeSlide.marca}
+          </strong>
+        </h1>
+      </div>
+
+      <p className="home-showcase-fixed-text">
+        Encuentra repuestos por marca y por sistema: frenos, motor,
+        transmisión, rodamiento y más.
+      </p>
+
+      <div className="home-showcase-actions">
+        <Link
+          href={`/marca/${encodeURIComponent(activeSlide.marca)}`}
+          className="home-showcase-primary"
+        >
+          Ver {activeSlide.marca}
+        </Link>
+      </div>
+
+      {slides.length > 1 && (
+        <div className="home-showcase-brand-selector">
+          {slides.map((slide, index) => (
+            <button
+              key={slide.marca}
+              type="button"
+              className={`home-showcase-brand-option ${
+                index === activeIndex ? "active" : ""
+              }`}
+              onClick={() => handleBrandSelection(index)}
+              aria-label={`Ver repuestos ${slide.marca}`}
+            >
+              <Image
+                src={getBrandLogo(slide.marca)}
+                alt=""
+                width={44}
+                height={28}
+                className="home-showcase-brand-option-logo"
+              />
+
+              <span>{slide.marca}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div
+      key={`visual-${activeSlide.marca}-${currentProductOffset}`}
+      className="home-showcase-visual"
+    >
+      <div className="home-showcase-wave" aria-hidden="true" />
+
+      <span className="home-showcase-watermark" aria-hidden="true">
+        {activeSlide.marca}
+      </span>
+
+      {visibleProducts.map((product, index) => (
+        <Link
+          key={`${activeSlide.marca}-${product.id}-${index}`}
+          href={getProductHref(product, activeSlide.marca)}
+          className={`showcase-part showcase-part-clickable showcase-part-${
+            index + 1
+          }`}
+          onClick={resetTimer}
+          aria-label={`Ver detalles de ${product.nombre}`}
+        >
           <Image
-            src="/products/Logo_Repuestos.png"
-            alt="Logo Repuestos Garces"
-            width={130}
-            height={70}
-            className="home-showcase-logo"
-            priority
+            src={product.imagen}
+            alt={product.nombre}
+            width={360}
+            height={260}
+            className="showcase-part-image"
+            sizes="(max-width: 640px) 42vw, (max-width: 980px) 34vw, 360px"
+            priority={activeIndex === 0 && index === 0}
           />
 
-          <span>Catálogo de repuestos</span>
-        </div>
-
-        <div className="home-showcase-title-area">
-
-          <h1 className="home-showcase-title">
-            <span className="home-showcase-title-prefix">
-              Repuestos para tu
-            </span>
-
-            <strong
-              className={`home-showcase-brand-name ${
-                isLongBrand ? "is-long-brand" : ""
-              }`}
-            >
-              {activeSlide.marca}
-            </strong>
-          </h1>
-        </div>
-
-        <p className="home-showcase-fixed-text">
-          Encuentra repuestos por marca y por sistema: frenos, motor,
-          transmisión, rodamiento y más.
-        </p>
-
-        <div className="home-showcase-actions">
-          <Link
-            href={`/marca/${encodeURIComponent(activeSlide.marca)}`}
-            className="home-showcase-primary"
-          >
-            Ver {activeSlide.marca}
-          </Link>
-
-          <a href="#marcas" className="home-showcase-secondary">
-            Ver marcas
-          </a>
-        </div>
-
-        {slides.length > 1 && (
-          <div className="home-showcase-brand-selector">
-            {slides.map((slide, index) => (
-              <button
-                key={slide.marca}
-                type="button"
-                className={`home-showcase-brand-option ${
-                  index === activeIndex ? "active" : ""
-                }`}
-                onClick={() => handleBrandSelection(index)}
-                aria-label={`Ver repuestos ${slide.marca}`}
-              >
-                <Image
-                  src={getBrandLogo(slide.marca)}
-                  alt=""
-                  width={44}
-                  height={28}
-                  className="home-showcase-brand-option-logo"
-                />
-
-                <span>{slide.marca}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div
-        key={`visual-${activeSlide.marca}-${currentProductOffset}`}
-        className="home-showcase-visual"
-      >
-        <div className="home-showcase-wave" aria-hidden="true" />
-
-        <span className="home-showcase-watermark" aria-hidden="true">
-          {activeSlide.marca}
-        </span>
-
-        {visibleProducts.map((product, index) => (
-          <Link
-            key={`${activeSlide.marca}-${product.id}-${index}`}
-            href={getProductHref(product, activeSlide.marca)}
-            className={`showcase-part showcase-part-clickable showcase-part-${
-              index + 1
-            }`}
-            onClick={resetTimer}
-            aria-label={`Ver detalles de ${product.nombre}`}
-          >
-            <Image
-              src={product.imagen}
-              alt={product.nombre}
-              width={360}
-              height={260}
-              className="showcase-part-image"
-              sizes="(max-width: 640px) 42vw, (max-width: 980px) 34vw, 360px"
-              priority={activeIndex === 0 && index === 0}
-            />
-
-            <span className="showcase-part-label">{product.nombre}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
+          <span className="showcase-part-label">
+            {product.nombre}
+          </span>
+        </Link>
+      ))}
+    </div>
+  </section>
+);
 }
