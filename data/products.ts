@@ -4,23 +4,38 @@ export type DeliveryInfo = {
   enviosNacionales?: string;
 };
 
+export type OfferType = "oferta" | "remate" | "liquidacion";
+
 export type Product = {
   id: string;
   marcaVehiculo: string;
   categoria: string;
   nombre: string;
   slug: string;
+
   codigoOEM?: string;
   stockDisponible?: boolean;
   imagen: string;
   compatibilidad?: string[];
+
   mostrarInfoPublica?: boolean;
   mostrarMensajeWhatsApp?: boolean;
+
   telefonoWhatsApp?: string;
   telefonoAlterno?: string;
+
   medidas?: string;
   descripcion?: string;
   envios?: DeliveryInfo;
+
+  // PRECIOS Y OFERTAS
+  precioRegular?: number;
+  precioOferta?: number;
+  ofertaActiva?: boolean;
+  ofertaInicio?: string;
+  ofertaFin?: string;
+  tipoOferta?: OfferType;
+
   createdAt?: string;
   updatedAt?: string;
 };

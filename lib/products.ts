@@ -4,10 +4,11 @@ import {
   DEFAULT_DELIVERY_INFO,
   DEFAULT_PHONE,
   type DeliveryInfo,
+  type OfferType,
   type Product,
 } from "../data/products";
 
-export type { DeliveryInfo, Product };
+export type { DeliveryInfo, OfferType, Product };
 
 export type ProductInput = {
   id?: string;
@@ -25,6 +26,13 @@ export type ProductInput = {
   envios?: DeliveryInfo;
   mostrarInfoPublica?: boolean;
   mostrarMensajeWhatsApp?: boolean;
+
+  precioRegular?: number;
+  precioOferta?: number;
+  ofertaActiva?: boolean;
+  ofertaInicio?: string;
+  ofertaFin?: string;
+  tipoOferta?: OfferType;
 };
 
 export { DEFAULT_DELIVERY_INFO, DEFAULT_PHONE };
@@ -46,6 +54,14 @@ type ProductRow = {
   medidas: string | null;
   descripcion: string | null;
   envios: DeliveryInfo | null;
+
+  precio_regular: number | null;
+  precio_oferta: number | null;
+  oferta_activa: boolean;
+  oferta_inicio: string | null;
+  oferta_fin: string | null;
+  tipo_oferta: OfferType | null;
+
   created_at: string;
   updated_at: string;
 };
@@ -64,6 +80,14 @@ function normalizeArray(values?: string[] | null): string[] | undefined {
     .filter((item, index, arr) => arr.indexOf(item) === index);
 
   return cleaned.length > 0 ? cleaned : undefined;
+}
+
+function normalizeNumber(
+  value?: number | null
+): number | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (!Number.isFinite(value)) return undefined;
+  return value;
 }
 
 function slugify(value: string): string {
@@ -88,16 +112,36 @@ function mapRowToProduct(row: ProductRow): Product {
     marcaVehiculo: row.marca_vehiculo,
     categoria: row.categoria,
     imagen: row.imagen,
+
     codigoOEM: row.codigo_oem ?? undefined,
     stockDisponible: row.stock_disponible ?? undefined,
     compatibilidad: row.compatibilidad ?? undefined,
+
     mostrarInfoPublica: row.mostrar_info_publica,
     mostrarMensajeWhatsApp: row.mostrar_mensaje_whatsapp,
+
     telefonoWhatsApp: row.telefono_whatsapp ?? DEFAULT_PHONE,
     telefonoAlterno: row.telefono_alterno ?? undefined,
+
     medidas: row.medidas ?? undefined,
     descripcion: row.descripcion ?? undefined,
     envios: row.envios ?? DEFAULT_DELIVERY_INFO,
+
+    precioRegular:
+      row.precio_regular === null
+        ? undefined
+        : Number(row.precio_regular),
+
+    precioOferta:
+      row.precio_oferta === null
+        ? undefined
+        : Number(row.precio_oferta),
+
+    ofertaActiva: row.oferta_activa ?? false,
+    ofertaInicio: row.oferta_inicio ?? undefined,
+    ofertaFin: row.oferta_fin ?? undefined,
+    tipoOferta: row.tipo_oferta ?? "oferta",
+
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -113,37 +157,84 @@ function mapProductToRow(product: Product): ProductRow {
     marca_vehiculo: product.marcaVehiculo,
     categoria: product.categoria,
     imagen: product.imagen,
+
     codigo_oem: product.codigoOEM ?? null,
+
     stock_disponible:
       typeof product.stockDisponible === "boolean"
         ? product.stockDisponible
         : null,
+
     compatibilidad: product.compatibilidad ?? [],
-    mostrar_info_publica: product.mostrarInfoPublica ?? true,
-    mostrar_mensaje_whatsapp: product.mostrarMensajeWhatsApp ?? true,
-    telefono_whatsapp: product.telefonoWhatsApp ?? DEFAULT_PHONE,
-    telefono_alterno: product.telefonoAlterno ?? null,
-    medidas: product.medidas ?? null,
-    descripcion: product.descripcion ?? null,
-    envios: product.envios ?? DEFAULT_DELIVERY_INFO,
-    created_at: product.createdAt ?? now,
-    updated_at: product.updatedAt ?? now,
+
+    mostrar_info_publica:
+      product.mostrarInfoPublica ?? true,
+
+    mostrar_mensaje_whatsapp:
+      product.mostrarMensajeWhatsApp ?? true,
+
+    telefono_whatsapp:
+      product.telefonoWhatsApp ?? DEFAULT_PHONE,
+
+    telefono_alterno:
+      product.telefonoAlterno ?? null,
+
+    medidas:
+      product.medidas ?? null,
+
+    descripcion:
+      product.descripcion ?? null,
+
+    envios:
+      product.envios ?? DEFAULT_DELIVERY_INFO,
+
+    precio_regular:
+      product.precioRegular ?? null,
+
+    precio_oferta:
+      product.precioOferta ?? null,
+
+    oferta_activa:
+      product.ofertaActiva ?? false,
+
+    oferta_inicio:
+      product.ofertaInicio ?? null,
+
+    oferta_fin:
+      product.ofertaFin ?? null,
+
+    tipo_oferta:
+      product.tipoOferta ?? "oferta",
+
+    created_at:
+      product.createdAt ?? now,
+
+    updated_at:
+      product.updatedAt ?? now,
   };
 }
 
 async function findById(id: string): Promise<Product | undefined> {
-  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
-    params: {
-      select: "*",
-      id: `eq.${id}`,
-      limit: "1",
-    },
-  });
+  const { data: rows } = await supabaseFetch<ProductRow[]>(
+    "products",
+    {
+      params: {
+        select: "*",
+        id: `eq.${id}`,
+        limit: "1",
+      },
+    }
+  );
 
-  return rows[0] ? mapRowToProduct(rows[0]) : undefined;
+  return rows[0]
+    ? mapRowToProduct(rows[0])
+    : undefined;
 }
 
-async function slugExists(slug: string, currentId?: string) {
+async function slugExists(
+  slug: string,
+  currentId?: string
+) {
   const params: Record<string, string> = {
     select: "id",
     slug: `eq.${slug}`,
@@ -154,15 +245,17 @@ async function slugExists(slug: string, currentId?: string) {
     params.id = `neq.${currentId}`;
   }
 
-  const { data: rows } = await supabaseFetch<Pick<ProductRow, "id">[]>(
-    "products",
-    { params }
-  );
+  const { data: rows } = await supabaseFetch<
+    { id: string }[]
+  >("products", { params });
 
   return rows.length > 0;
 }
 
-async function buildUniqueSlug(baseSlug: string, currentId?: string) {
+async function buildUniqueSlug(
+  baseSlug: string,
+  currentId?: string
+) {
   let slug = baseSlug;
   let counter = 2;
 
@@ -175,12 +268,15 @@ async function buildUniqueSlug(baseSlug: string, currentId?: string) {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
-    params: {
-      select: "*",
-      order: "nombre.asc",
-    },
-  });
+  const { data: rows } = await supabaseFetch<ProductRow[]>(
+    "products",
+    {
+      params: {
+        select: "*",
+        order: "nombre.asc",
+      },
+    }
+  );
 
   return rows.map(mapRowToProduct);
 }
@@ -194,41 +290,54 @@ type PaginatedProductsResult = {
 };
 
 function normalizePage(page?: number) {
-  if (!page || Number.isNaN(page) || page < 1) return 1;
+  if (!page || Number.isNaN(page) || page < 1) {
+    return 1;
+  }
+
   return Math.floor(page);
 }
 
 function normalizePageSize(pageSize?: number) {
-  if (!pageSize || Number.isNaN(pageSize) || pageSize < 1) return 12;
+  if (
+    !pageSize ||
+    Number.isNaN(pageSize) ||
+    pageSize < 1
+  ) {
+    return 12;
+  }
+
   return Math.min(Math.floor(pageSize), 48);
 }
 
 export async function getBrandCategories(
   marcaVehiculo: string
 ): Promise<string[]> {
-  const { data: rows } = await supabaseFetch<Pick<ProductRow, "categoria">[]>(
-    "products",
-    {
-      params: {
-        select: "categoria",
-        mostrar_info_publica: "eq.true",
-        marca_vehiculo: `ilike.${escapeLike(marcaVehiculo)}`,
-        order: "categoria.asc",
-      },
-    }
-  );
+  const { data: rows } = await supabaseFetch<
+    { categoria: string }[]
+  >("products", {
+    params: {
+      select: "categoria",
+      mostrar_info_publica: "eq.true",
+      marca_vehiculo: `ilike.${escapeLike(
+        marcaVehiculo
+      )}`,
+      order: "categoria.asc",
+    },
+  });
 
-  return Array.from(new Set(rows.map((row) => row.categoria))).sort((a, b) =>
-    a.localeCompare(b)
-  );
+  return Array.from(
+    new Set(rows.map((row) => row.categoria))
+  ).sort((a, b) => a.localeCompare(b));
 }
 
-export async function getPublicProductsByBrand(params: {
-  marcaVehiculo: string;
-  categoria?: string | null;
-  page?: number;
-  pageSize?: number;
-}): Promise<PaginatedProductsResult> {
+export async function getPublicProductsByBrand(
+  params: {
+    marcaVehiculo: string;
+    categoria?: string | null;
+    page?: number;
+    pageSize?: number;
+  }
+): Promise<PaginatedProductsResult> {
   const page = normalizePage(params.page);
   const pageSize = normalizePageSize(params.pageSize);
   const offset = (page - 1) * pageSize;
@@ -236,25 +345,32 @@ export async function getPublicProductsByBrand(params: {
   const queryParams: Record<string, string> = {
     select: "*",
     mostrar_info_publica: "eq.true",
-    marca_vehiculo: `ilike.${escapeLike(params.marcaVehiculo)}`,
+    marca_vehiculo: `ilike.${escapeLike(
+      params.marcaVehiculo
+    )}`,
     order: "nombre.asc",
   };
 
   if (params.categoria) {
-    queryParams.categoria = `eq.${params.categoria}`;
+    queryParams.categoria =
+      `eq.${params.categoria}`;
   }
 
-  const { data: rows, count } = await supabaseFetch<ProductRow[]>("products", {
-    params: queryParams,
-    range: {
-      from: offset,
-      to: offset + pageSize - 1,
-    },
-    prefer: "count=exact",
-  });
+  const { data: rows, count } =
+    await supabaseFetch<ProductRow[]>("products", {
+      params: queryParams,
+      range: {
+        from: offset,
+        to: offset + pageSize - 1,
+      },
+      prefer: "count=exact",
+    });
 
   const total = count ?? rows.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(total / pageSize)
+  );
 
   return {
     items: rows.map(mapRowToProduct),
@@ -265,11 +381,13 @@ export async function getPublicProductsByBrand(params: {
   };
 }
 
-export async function searchPublicProducts(params: {
-  query: string;
-  page?: number;
-  pageSize?: number;
-}): Promise<PaginatedProductsResult> {
+export async function searchPublicProducts(
+  params: {
+    query: string;
+    page?: number;
+    pageSize?: number;
+  }
+): Promise<PaginatedProductsResult> {
   const query = params.query.trim();
   const page = normalizePage(params.page);
   const pageSize = normalizePageSize(params.pageSize);
@@ -285,13 +403,14 @@ export async function searchPublicProducts(params: {
     };
   }
 
-  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
-    params: {
-      select: "*",
-      mostrar_info_publica: "eq.true",
-      order: "nombre.asc",
-    },
-  });
+  const { data: rows } =
+    await supabaseFetch<ProductRow[]>("products", {
+      params: {
+        select: "*",
+        mostrar_info_publica: "eq.true",
+        order: "nombre.asc",
+      },
+    });
 
   const needle = query.toLowerCase();
 
@@ -306,14 +425,21 @@ export async function searchPublicProducts(params: {
       ...(row.compatibilidad ?? []),
     ];
 
-    return fields.some((field) => field?.toLowerCase().includes(needle));
+    return fields.some((field) =>
+      field?.toLowerCase().includes(needle)
+    );
   });
 
   const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(total / pageSize)
+  );
 
   return {
-    items: filtered.slice(offset, offset + pageSize).map(mapRowToProduct),
+    items: filtered
+      .slice(offset, offset + pageSize)
+      .map(mapRowToProduct),
     total,
     page,
     pageSize,
@@ -321,72 +447,138 @@ export async function searchPublicProducts(params: {
   };
 }
 
-export async function upsertProduct(input: ProductInput): Promise<Product> {
+export async function upsertProduct(
+  input: ProductInput
+): Promise<Product> {
   const now = new Date().toISOString();
-  const existing = input.id ? await findById(input.id) : undefined;
+
+  const existing = input.id
+    ? await findById(input.id)
+    : undefined;
 
   const baseSlug = slugify(
-    input.nombre || existing?.nombre || `producto-${Date.now()}`
+    input.nombre ||
+      existing?.nombre ||
+      `producto-${Date.now()}`
   );
-  const slug = await buildUniqueSlug(baseSlug, existing?.id);
+
+  const slug = await buildUniqueSlug(
+    baseSlug,
+    existing?.id
+  );
 
   const normalizedProduct: Product = {
     id: existing?.id ?? randomUUID(),
     slug,
+
     nombre: input.nombre.trim(),
     marcaVehiculo: input.marcaVehiculo.trim(),
     categoria: input.categoria.trim(),
+
     imagen:
       normalizeText(input.imagen) ??
       existing?.imagen ??
       "/products/placeholder.svg",
-    codigoOEM: normalizeText(input.codigoOEM),
-    stockDisponible: input.stockDisponible,
+
+    codigoOEM:
+      normalizeText(input.codigoOEM),
+
+    stockDisponible:
+      input.stockDisponible,
+
     telefonoWhatsApp:
       normalizeText(input.telefonoWhatsApp) ??
       existing?.telefonoWhatsApp ??
       DEFAULT_PHONE,
-    telefonoAlterno: normalizeText(input.telefonoAlterno),
-    medidas: normalizeText(input.medidas),
-    descripcion: normalizeText(input.descripcion),
-    compatibilidad: normalizeArray(input.compatibilidad),
+
+    telefonoAlterno:
+      normalizeText(input.telefonoAlterno),
+
+    medidas:
+      normalizeText(input.medidas),
+
+    descripcion:
+      normalizeText(input.descripcion),
+
+    compatibilidad:
+      normalizeArray(input.compatibilidad),
+
     envios: {
       retiroLocal:
         normalizeText(input.envios?.retiroLocal) ??
         existing?.envios?.retiroLocal ??
         DEFAULT_DELIVERY_INFO.retiroLocal,
+
       deliveryLocal:
         normalizeText(input.envios?.deliveryLocal) ??
         existing?.envios?.deliveryLocal ??
         DEFAULT_DELIVERY_INFO.deliveryLocal,
+
       enviosNacionales:
-        normalizeText(input.envios?.enviosNacionales) ??
+        normalizeText(
+          input.envios?.enviosNacionales
+        ) ??
         existing?.envios?.enviosNacionales ??
         DEFAULT_DELIVERY_INFO.enviosNacionales,
     },
+
     mostrarInfoPublica:
-      input.mostrarInfoPublica ?? existing?.mostrarInfoPublica ?? true,
+      input.mostrarInfoPublica ??
+      existing?.mostrarInfoPublica ??
+      true,
+
     mostrarMensajeWhatsApp:
-      input.mostrarMensajeWhatsApp ?? existing?.mostrarMensajeWhatsApp ?? true,
-    createdAt: existing?.createdAt ?? now,
-    updatedAt: now,
+      input.mostrarMensajeWhatsApp ??
+      existing?.mostrarMensajeWhatsApp ??
+      true,
+
+    precioRegular:
+      normalizeNumber(input.precioRegular),
+
+    precioOferta:
+      normalizeNumber(input.precioOferta),
+
+    ofertaActiva:
+      input.ofertaActiva ?? false,
+
+    ofertaInicio:
+      normalizeText(input.ofertaInicio),
+
+    ofertaFin:
+      normalizeText(input.ofertaFin),
+
+    tipoOferta:
+      input.tipoOferta ?? "oferta",
+
+    createdAt:
+      existing?.createdAt ?? now,
+
+    updatedAt:
+      now,
   };
 
-  const { data: rows } = await supabaseFetch<ProductRow[]>("products", {
-    method: "POST",
-    params: {
-      on_conflict: "id",
-      select: "*",
-    },
-    body: [mapProductToRow(normalizedProduct)],
-    prefer: "resolution=merge-duplicates,return=representation",
-  });
+  const { data: rows } =
+    await supabaseFetch<ProductRow[]>(
+      "products",
+      {
+        method: "POST",
+        params: {
+          on_conflict: "id",
+          select: "*",
+        },
+        body: [mapProductToRow(normalizedProduct)],
+        prefer:
+          "resolution=merge-duplicates,return=representation",
+      }
+    );
 
-  return rows[0] ? mapRowToProduct(rows[0]) : normalizedProduct;
+  return rows[0]
+    ? mapRowToProduct(rows[0])
+    : normalizedProduct;
 }
 
 export async function removeProduct(id: string) {
-  await supabaseFetch<null>("products", {
+  await supabaseFetch("products", {
     method: "DELETE",
     params: {
       id: `eq.${id}`,
@@ -395,7 +587,12 @@ export async function removeProduct(id: string) {
   });
 }
 
-export function sanitizePhoneNumber(phone?: string | null) {
-  const cleaned = phone?.replace(/\D/g, "").trim();
+export function sanitizePhoneNumber(
+  phone?: string | null
+) {
+  const cleaned = phone
+    ?.replace(/\D/g, "")
+    .trim();
+
   return cleaned || DEFAULT_PHONE;
 }

@@ -3,6 +3,8 @@ import Image from "next/image";
 import type { Metadata } from "next";
 
 import HomeShowcaseBanner from "../components/HomeShowcaseBanner";
+import HomeOffersSection from "../components/HomeOffersSection";
+
 import { getProducts } from "../lib/products";
 
 export const metadata: Metadata = {
@@ -44,11 +46,15 @@ export default async function Home() {
   const productos = await getProducts();
 
   const productosBase = productos
-    .filter((producto) => producto.mostrarInfoPublica !== false)
+    .filter(
+      (producto) =>
+        producto.mostrarInfoPublica !== false
+    )
     .filter(
       (producto) =>
         producto.imagen &&
-        producto.imagen !== "/products/placeholder.svg"
+        producto.imagen !==
+          "/products/placeholder.svg"
     );
 
   const productosPublicos = marcas
@@ -56,8 +62,9 @@ export default async function Home() {
       productosBase
         .filter(
           (producto) =>
-            normalizeBrand(producto.marcaVehiculo ?? "") ===
-            normalizeBrand(marca.name)
+            normalizeBrand(
+              producto.marcaVehiculo ?? ""
+            ) === normalizeBrand(marca.name)
         )
         .slice(0, 10)
     )
@@ -65,24 +72,59 @@ export default async function Home() {
       id: String(producto.id),
       slug: producto.slug,
       nombre: producto.nombre,
-      marcaVehiculo: producto.marcaVehiculo,
+      marcaVehiculo:
+        producto.marcaVehiculo,
       categoria: producto.categoria,
       imagen: producto.imagen,
     }));
 
   return (
     <div className="home-page">
-      <HomeShowcaseBanner products={productosPublicos} />
+      {/* HERO PRINCIPAL */}
+      <HomeShowcaseBanner
+        products={productosPublicos}
+      />
 
+      {/* OFERTAS:
+          solo aparece cuando hay
+          promociones vigentes */}
+      <HomeOffersSection
+        products={productosBase}
+      />
+
+      {/* MARCAS */}
       <section
         id="marcas"
         className="home-brands-section"
       >
+        <div className="home-brands-heading">
+          <div>
+            <span className="home-brands-eyebrow">
+              CATÁLOGO
+            </span>
+
+            <h2 className="home-brands-title">
+              Marcas
+            </h2>
+
+            <p className="home-brands-subtitle">
+              Encuentre el repuesto que necesite
+              por fabricante.
+            </p>
+          </div>
+
+          <span className="home-brands-count">
+            {marcas.length} marcas
+          </span>
+        </div>
+
         <div className="home-grid">
           {marcas.map((marca) => (
             <Link
               key={marca.name}
-              href={`/marca/${encodeURIComponent(marca.name)}`}
+              href={`/marca/${encodeURIComponent(
+                marca.name
+              )}`}
               className="home-card"
             >
               <div className="home-card-image">
@@ -93,13 +135,21 @@ export default async function Home() {
                   height={130}
                   className="home-brand-logo"
                   sizes="(max-width: 768px) 80vw, 240px"
-                  priority
                 />
               </div>
 
-              <span className="home-card-name">
-                {marca.name}
-              </span>
+              <div className="home-brand-card-footer">
+                <span className="home-card-name">
+                  {marca.name}
+                </span>
+
+                <span
+                  className="home-brand-arrow"
+                  aria-hidden="true"
+                >
+                  →
+                </span>
+              </div>
             </Link>
           ))}
         </div>
