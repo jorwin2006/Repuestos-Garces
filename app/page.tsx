@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 
+import DownloadAppSection from "../components/DownloadAppSection";
 import HomeShowcaseBanner from "../components/HomeShowcaseBanner";
 import HomeOffersSection from "../components/HomeOffersSection";
 
@@ -38,61 +39,89 @@ const marcas = [
   },
 ];
 
-function normalizeBrand(value: string) {
-  return value.trim().toUpperCase();
+function normalizeBrand(
+  value: string
+) {
+  return value
+    .trim()
+    .toUpperCase();
 }
 
 export default async function Home() {
-  const productos = await getProducts();
+  const productos =
+    await getProducts();
 
-  const productosBase = productos
-    .filter(
-      (producto) =>
-        producto.mostrarInfoPublica !== false
-    )
-    .filter(
-      (producto) =>
-        producto.imagen &&
-        producto.imagen !==
-          "/products/placeholder.svg"
-    );
+  const productosBase =
+    productos
+      .filter(
+        (producto) =>
+          producto.mostrarInfoPublica !==
+          false
+      )
+      .filter(
+        (producto) =>
+          producto.imagen &&
+          producto.imagen !==
+            "/products/placeholder.svg"
+      );
 
-  const productosPublicos = marcas
-    .flatMap((marca) =>
-      productosBase
-        .filter(
-          (producto) =>
-            normalizeBrand(
-              producto.marcaVehiculo ?? ""
-            ) === normalizeBrand(marca.name)
-        )
-        .slice(0, 10)
-    )
-    .map((producto) => ({
-      id: String(producto.id),
-      slug: producto.slug,
-      nombre: producto.nombre,
-      marcaVehiculo:
-        producto.marcaVehiculo,
-      categoria: producto.categoria,
-      imagen: producto.imagen,
-    }));
+  const productosPublicos =
+    marcas
+      .flatMap((marca) =>
+        productosBase
+          .filter(
+            (producto) =>
+              normalizeBrand(
+                producto.marcaVehiculo ??
+                  ""
+              ) ===
+              normalizeBrand(
+                marca.name
+              )
+          )
+          .slice(0, 10)
+      )
+      .map((producto) => ({
+        id: String(
+          producto.id
+        ),
+
+        slug:
+          producto.slug,
+
+        nombre:
+          producto.nombre,
+
+        marcaVehiculo:
+          producto.marcaVehiculo,
+
+        categoria:
+          producto.categoria,
+
+        imagen:
+          producto.imagen,
+      }));
 
   return (
     <div className="home-page">
-      {/* HERO PRINCIPAL */}
+      {/* HERO */}
+
       <HomeShowcaseBanner
-        products={productosPublicos}
+        products={
+          productosPublicos
+        }
       />
 
-      {/* OFERTAS:
-          solo aparece cuando hay
-          promociones vigentes */}
+      {/* OFERTAS WEB */}
+
       <HomeOffersSection
-        products={productosBase}
+        products={
+          productosBase
+        }
       />
 
       {/* MARCAS */}
+
       <section
         id="marcas"
         className="home-brands-section"
@@ -108,8 +137,8 @@ export default async function Home() {
             </h2>
 
             <p className="home-brands-subtitle">
-              Encuentre el repuesto que necesite
-              por fabricante.
+              Encuentre el repuesto que
+              necesite por fabricante.
             </p>
           </div>
 
@@ -119,41 +148,53 @@ export default async function Home() {
         </div>
 
         <div className="home-grid">
-          {marcas.map((marca) => (
-            <Link
-              key={marca.name}
-              href={`/marca/${encodeURIComponent(
-                marca.name
-              )}`}
-              className="home-card"
-            >
-              <div className="home-card-image">
-                <Image
-                  src={marca.logo}
-                  alt={`Logo ${marca.name}`}
-                  width={240}
-                  height={130}
-                  className="home-brand-logo"
-                  sizes="(max-width: 768px) 80vw, 240px"
-                />
-              </div>
+          {marcas.map(
+            (marca) => (
+              <Link
+                key={
+                  marca.name
+                }
+                href={`/marca/${encodeURIComponent(
+                  marca.name
+                )}`}
+                className="home-card"
+              >
+                <div className="home-card-image">
+                  <Image
+                    src={
+                      marca.logo
+                    }
+                    alt={`Logo ${marca.name}`}
+                    width={240}
+                    height={130}
+                    className="home-brand-logo"
+                    sizes="(max-width: 768px) 80vw, 240px"
+                  />
+                </div>
 
-              <div className="home-brand-card-footer">
-                <span className="home-card-name">
-                  {marca.name}
-                </span>
+                <div className="home-brand-card-footer">
+                  <span className="home-card-name">
+                    {
+                      marca.name
+                    }
+                  </span>
 
-                <span
-                  className="home-brand-arrow"
-                  aria-hidden="true"
-                >
-                  →
-                </span>
-              </div>
-            </Link>
-          ))}
+                  <span
+                    className="home-brand-arrow"
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                </div>
+              </Link>
+            )
+          )}
         </div>
       </section>
+
+      {/* DESCARGAR APP */}
+
+      <DownloadAppSection />
     </div>
   );
 }

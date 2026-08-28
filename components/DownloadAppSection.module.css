@@ -1,0 +1,575 @@
+.section {
+  width: 100%;
+  padding: 72px 24px;
+}
+
+.shell {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.2fr)
+    minmax(360px, 0.8fr);
+
+  gap: 56px;
+
+  padding: 54px;
+
+  border: 1px solid
+    rgba(148, 163, 184, 0.22);
+
+  border-radius: 34px;
+
+  background:
+    radial-gradient(
+      circle at 92% 4%,
+      rgba(37, 99, 235, 0.13),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fbff 100%
+    );
+
+  box-shadow:
+    0 24px 65px
+      rgba(15, 23, 42, 0.08);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+
+  gap: 8px;
+
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  background: #eaf2ff;
+  color: #1d4ed8;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.androidIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 7px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-size: 13px;
+}
+
+.title {
+  max-width: 620px;
+
+  margin: 19px 0 0;
+
+  color: #0f172a;
+
+  font-size: clamp(
+    36px,
+    4vw,
+    56px
+  );
+
+  line-height: 1.02;
+
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.description {
+  max-width: 650px;
+
+  margin: 19px 0 0;
+
+  color: #64748b;
+
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin-top: 25px;
+}
+
+.feature {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 9px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.84
+  );
+
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.featureIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  background: #dcfce7;
+  color: #15803d;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 17px;
+
+  margin-top: 30px;
+}
+
+.downloadButton {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 66px;
+
+  padding: 10px 19px 10px 11px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 13px 28px
+      rgba(37, 99, 235, 0.22);
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.downloadButton:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 17px 34px
+      rgba(37, 99, 235, 0.28);
+}
+
+.downloadButtonIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255, 255, 255, 0.15);
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.downloadButton span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.downloadButton strong {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.downloadButton small {
+  color: #dbeafe;
+
+  font-size: 10px;
+}
+
+.version {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color: #475569;
+}
+
+.versionDot {
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow:
+    0 0 0 5px
+      rgba(34, 197, 94, 0.12);
+}
+
+.version div {
+  display: flex;
+  flex-direction: column;
+}
+
+.version strong {
+  color: #334155;
+
+  font-size: 11px;
+}
+
+.version span:last-child {
+  margin-top: 2px;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+.installNotice {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  max-width: 670px;
+
+  margin-top: 28px;
+  padding: 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+
+  background: rgba(
+    248,
+    250,
+    252,
+    0.9
+  );
+}
+
+.noticeIcon {
+  flex: 0 0 auto;
+
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #fff7ed;
+  color: #c2410c;
+
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.installNotice strong {
+  color: #334155;
+
+  font-size: 11px;
+}
+
+.installNotice p {
+  margin: 4px 0 0;
+
+  color: #64748b;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.qrColumn {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, 0.65fr)
+    minmax(210px, 1fr);
+
+  gap: 14px;
+
+  align-items: stretch;
+}
+
+.phoneCard,
+.qrCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 25px;
+
+  background:
+    rgba(255, 255, 255, 0.92);
+
+  box-shadow:
+    0 13px 35px
+      rgba(15, 23, 42, 0.06);
+}
+
+.phoneCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 360px;
+
+  padding: 24px 17px;
+
+  text-align: center;
+}
+
+.appLogoWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 112px;
+  height: 112px;
+
+  border-radius: 30px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5eaf2;
+
+  box-shadow:
+    0 13px 29px
+      rgba(15, 23, 42, 0.08);
+}
+
+.appLogo {
+  object-fit: contain;
+}
+
+.appSmall {
+  margin-top: 23px;
+
+  color: #2563eb;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+}
+
+.appName {
+  margin-top: 6px;
+
+  color: #0f172a;
+
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.appPlatform {
+  margin-top: 7px;
+
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+.qrCard {
+  padding: 20px;
+}
+
+.qrHeader {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.qrIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 12px;
+
+  background: #edf4ff;
+  color: #2563eb;
+
+  font-size: 17px;
+}
+
+.qrHeader div {
+  display: flex;
+  flex-direction: column;
+}
+
+.qrHeader strong {
+  color: #0f172a;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.qrHeader span {
+  margin-top: 3px;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.qrWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 17px;
+  padding: 13px;
+
+  border-radius: 19px;
+
+  background: #ffffff;
+
+  border: 1px solid #eef2f7;
+}
+
+.qrImage {
+  width: min(100%, 230px);
+  height: auto;
+
+  display: block;
+}
+
+.qrLoading {
+  height: 220px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+.qrFooter {
+  margin: 12px 0 0;
+
+  color: #64748b;
+
+  font-size: 9px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 1050px) {
+  .shell {
+    grid-template-columns: 1fr;
+
+    padding: 42px;
+  }
+
+  .qrColumn {
+    max-width: 650px;
+  }
+}
+
+@media (max-width: 700px) {
+  .section {
+    padding: 46px 16px;
+  }
+
+  .shell {
+    gap: 34px;
+
+    padding: 28px 20px;
+
+    border-radius: 25px;
+  }
+
+  .title {
+    font-size: 38px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .downloadButton {
+    width: 100%;
+  }
+
+  .qrColumn {
+    grid-template-columns: 1fr;
+  }
+
+  .phoneCard {
+    min-height: 230px;
+  }
+
+  .features {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

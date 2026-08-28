@@ -7,55 +7,104 @@ import { usePathname } from "next/navigation";
 import QuoteCartDrawer from "./quote-cart/QuoteCartDrawer";
 import { QuoteCartProvider } from "./quote-cart/QuoteCartProvider";
 import ThemeToggle from "./ThemeToggle";
+
 import styles from "./SiteChrome.module.css";
 
 type SiteChromeProps = {
   children: React.ReactNode;
 };
 
-export default function SiteChrome({ children }: SiteChromeProps) {
-  const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+export default function SiteChrome({
+  children,
+}: SiteChromeProps) {
+  const pathname =
+    usePathname();
+
+  const isAdmin =
+    pathname?.startsWith(
+      "/admin"
+    );
 
   return (
     <QuoteCartProvider>
       {!isAdmin ? (
-        <header className={styles.header}>
-          <div className={styles.inner}>
-            {/* Logo y nombre */}
+        <header
+          className={
+            styles.header
+          }
+        >
+          <div
+            className={
+              styles.inner
+            }
+          >
+            {/* LOGO */}
 
             <Link
               href="/"
-              className={styles.brand}
+              className={
+                styles.brand
+              }
               aria-label="Ir al inicio de Repuestos Garces"
             >
-              <div className={styles.logoWrap}>
+              <div
+                className={
+                  styles.logoWrap
+                }
+              >
                 <Image
                   src="/products/Logo_Repuestos.png"
                   alt="Logo de Repuestos Garces"
                   width={52}
                   height={52}
-                  className={styles.logo}
+                  className={
+                    styles.logo
+                  }
                   priority
                 />
               </div>
 
-              <div className={styles.brandText}>
-                <span className={styles.brandTop}>Repuestos</span>
-                <strong className={styles.brandName}>Garces</strong>
+              <div
+                className={
+                  styles.brandText
+                }
+              >
+                <span
+                  className={
+                    styles.brandTop
+                  }
+                >
+                  Repuestos
+                </span>
+
+                <strong
+                  className={
+                    styles.brandName
+                  }
+                >
+                  Garces
+                </strong>
               </div>
             </Link>
 
-            {/* Buscador */}
+            {/* BUSCADOR */}
 
             <form
               action="/buscar"
               method="get"
-              className={styles.searchForm}
+              className={
+                styles.searchForm
+              }
             >
-              <div className={styles.searchBox}>
+              <div
+                className={
+                  styles.searchBox
+                }
+              >
                 <svg
-                  className={styles.searchIcon}
+                  className={
+                    styles.searchIcon
+                  }
                   viewBox="0 0 24 24"
                   fill="none"
                   aria-hidden="true"
@@ -73,43 +122,89 @@ export default function SiteChrome({ children }: SiteChromeProps) {
                   type="search"
                   name="q"
                   placeholder="Buscar por nombre, OEM o marca..."
-                  className={styles.searchInput}
+                  className={
+                    styles.searchInput
+                  }
                   aria-label="Buscar repuestos"
                 />
               </div>
 
-              <button type="submit" className={styles.searchButton}>
+              <button
+                type="submit"
+                className={
+                  styles.searchButton
+                }
+              >
                 Buscar
               </button>
             </form>
 
-            {/* Navegación */}
+            {/* NAVEGACIÓN */}
 
             <nav
-              className={styles.nav}
+              className={
+                styles.nav
+              }
               aria-label="Navegación principal"
             >
-              <Link href="/" className={styles.navLink}>
+              <Link
+                href="/"
+                className={
+                  styles.navLink
+                }
+              >
                 Inicio
               </Link>
 
-              <Link href="/nosotros" className={styles.navLink}>
+              <Link
+                href="/nosotros"
+                className={
+                  styles.navLink
+                }
+              >
                 Nosotros
               </Link>
 
-              <Link href="/envios" className={styles.navLink}>
+              <Link
+                href="/envios"
+                className={
+                  styles.navLink
+                }
+              >
                 Envíos
               </Link>
 
-              <Link href="/contacto" className={styles.navLink}>
+              <Link
+                href="/#descargar-app"
+                className={
+                  styles.navLink
+                }
+              >
+                Descargar APP
+              </Link>
+
+              <Link
+                href="/contacto"
+                className={
+                  styles.navLink
+                }
+              >
                 Contacto
               </Link>
             </nav>
 
-            {/* Tema */}
+            {/* TEMA */}
 
-            <div className={styles.actions}>
-              <div className={styles.themeWrap}>
+            <div
+              className={
+                styles.actions
+              }
+            >
+              <div
+                className={
+                  styles.themeWrap
+                }
+              >
                 <ThemeToggle />
               </div>
             </div>
@@ -117,17 +212,13 @@ export default function SiteChrome({ children }: SiteChromeProps) {
         </header>
       ) : null}
 
-      {/* Aquí se muestra el contenido de cada página */}
-
-      <main>{children}</main>
+      <main>
+        {children}
+      </main>
 
       {!isAdmin ? (
         <>
-          {/* Carrito de cotización */}
-
           <QuoteCartDrawer />
-
-          {/* WhatsApp flotante */}
 
           <a
             href="https://wa.me/593991657178?text=Hola%2C%20necesito%20informaci%C3%B3n%20sobre%20un%20repuesto"
