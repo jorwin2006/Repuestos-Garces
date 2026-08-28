@@ -1,29 +1,12 @@
 import { NextResponse } from "next/server";
 
-export const dynamic =
-  "force-dynamic";
+const APK_URL =
+  "https://80d0jsilzbb1p3ip.public.blob.vercel-storage.com/Repuestos-Garces-1.0.0.apk";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const apkUrl =
-    process.env.APP_APK_URL;
-
-  if (!apkUrl) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "La aplicación todavía no está disponible para descarga.",
-      },
-      {
-        status: 503,
-      }
-    );
-  }
-
-  return NextResponse.redirect(
-    apkUrl,
-    {
-      status: 307,
-    }
-  );
+  return NextResponse.redirect(APK_URL, {
+    status: 307,
+  });
 }
